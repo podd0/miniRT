@@ -6,7 +6,7 @@
 /*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 21:18:20 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/13 23:53:57 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/02/18 16:37:33 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int	is_shadow(t_vec3 o, t_vec3 d, t_scene *scene, float len)
 		i++;
 	}
 	return (0);
-	
 }
 t_vec3	clamp(t_vec3 v)
 {
