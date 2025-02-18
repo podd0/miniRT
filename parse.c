@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 22:59:28 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/12 19:59:00 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/02/18 16:44:57 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -358,7 +358,8 @@ void	set_methods(t_methods *methods)
 	methods[PLANE].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_plane;
 	methods[PLANE].normal = (t_vec3 (*)(void *, t_vec3)) plane_normal;
 	methods[CYLINDER].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_cylinder;
-	methods[CYLINDER].normal = (float (*)(void *, t_vec3,  t_vec3))cylinder_normal;
+	// methods[CYLINDER].normal = (float (*)(void *, t_vec3,  t_vec3))cylinder_normal;
+	methods[CYLINDER].normal = (t_vec3 (*)(void *, t_vec3))cylinder_normal;
 }
 
 t_scene	*parse(char *filename)
