@@ -42,20 +42,24 @@ int	loop(t_ctx *ctx)
 
 int handle_key_down(int key, t_control *ctrl)
 {
-    // Se premi 'r', aumenta la risoluzione virtuale
-    if (key == 'r') {
-        t_ctx *ctx = ctrl->ctx;
-        virtual_resize(ctx, ctx->win_w + 200, ctx->win_h + 200);
+    t_ctx *ctx = ctrl->ctx;
+    if (key == 65363 && ctrl->shift) {
+        virtual_resize(ctx, ctx->win_w + 200, ctx->win_h);
         return (0);
     }
-    // Se premi 'f', diminuisci la risoluzione virtuale
-    if (key == 'f') {
-        t_ctx *ctx = ctrl->ctx;
-        int new_w = ctx->win_w - 200;
-        int new_h = ctx->win_h - 200;
-        if (new_w < 100) new_w = 100;
-        if (new_h < 100) new_h = 100;
-        virtual_resize(ctx, new_w, new_h);
+    if (key == 65364 && ctrl->shift) {
+        virtual_resize(ctx, ctx->win_w, ctx->win_h + 200);
+        return (0);
+    }
+    if (key == 65361 && ctrl->shift) {
+        ctx->win_w -= 200;
+        if (ctx->win_w < 100) ctx->win_w = 100;
+        virtual_resize(ctx, ctx->win_w, ctx->win_h);
+    }
+    if (key == 65362 && ctrl->shift) {
+        ctx->win_h -= 200;
+        if (ctx->win_h < 100) ctx->win_h = 100;
+        virtual_resize(ctx, ctx->win_w, ctx->win_h);
         return (0);
     }
     // ... (gestione altri tasti)

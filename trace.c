@@ -16,7 +16,7 @@ t_vec3	calc_direction(int x, int y, float fov, t_frame camera, int win_w, int wi
 	x -= win_w / 2;
 	y -= win_h / 2;
 
-	unit_rot = fov / win_w;
+	unit_rot = fov / max(win_h, win_w);
 	v = rotx((dy + y) * unit_rot).z;
 	v = to_world(v, roty((dx + x) * unit_rot));
 	return (to_world(v, camera));

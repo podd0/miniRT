@@ -18,13 +18,12 @@ void virtual_resize(t_ctx *ctx, int new_w, int new_h)
     mlx_hook(ctx->mlx_win, 2, 1L << 0, handle_key_down, &ctx->control);
     mlx_hook(ctx->mlx_win, 3, 1L << 1, handle_key_up, &ctx->control);
     mlx_hook(ctx->mlx_win, 17, 1L << 17, mlx_loop_end, ctx->mlx);
-    mlx_hook(ctx->mlx_win, ConfigureNotify, StructureNotifyMask, (int (*)(XEvent *, void *))handle_resize, ctx);
 
     printf("virtual_resize: Buffer allocato: %d elementi, indirizzo %p\n",
            ctx->win_w * ctx->win_h, ctx->img_vec);
     reset_show(ctx);
-    update_show(ctx);
-    printf("virtual_resize completato: new_w = %d, new_h = %d\n", ctx->win_w, ctx->win_h);
+    // update_show(ctx);
+    // printf("virtual_resize completato: new_w = %d, new_h = %d\n", ctx->win_w, ctx->win_h);
 }
 
 // void virtual_resize(t_ctx *ctx, int new_w, int new_h)
