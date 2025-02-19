@@ -18,12 +18,11 @@ void virtual_resize(t_ctx *ctx, int new_w, int new_h)
     mlx_hook(ctx->mlx_win, 2, 1L << 0, handle_key_down, &ctx->control);
     mlx_hook(ctx->mlx_win, 3, 1L << 1, handle_key_up, &ctx->control);
     mlx_hook(ctx->mlx_win, 17, 1L << 17, mlx_loop_end, ctx->mlx);
+    mlx_mouse_hook(ctx->mlx_win, show_mouse, ctx);
 
     printf("virtual_resize: Buffer allocato: %d elementi, indirizzo %p\n",
            ctx->win_w * ctx->win_h, ctx->img_vec);
     reset_show(ctx);
-    // update_show(ctx);
-    // printf("virtual_resize completato: new_w = %d, new_h = %d\n", ctx->win_w, ctx->win_h);
 }
 
 // void virtual_resize(t_ctx *ctx, int new_w, int new_h)

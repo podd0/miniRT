@@ -40,9 +40,28 @@ int	loop(t_ctx *ctx)
 	return (0);
 }
 
-int handle_key_down(int key, t_control *ctrl)
+int show_mouse(int k, int x, int y, t_ctx *ctx)
 {
-    t_ctx *ctx = ctrl->ctx;
+    t_vec3  direction;
+    t_vec3  p;
+    t_shape *sh;
+
+    if (k != 1)
+        return (0);
+    direction = calc_direction(x, y, ctx->scene->fov, ctx->scene->camera, ctx->win_w, ctx->win_h);
+    sh = intersect_scene(&p, direction, ctx->scene, ctx->scene->camera.o);
+    // printf("key = %d, pos = (%d, %d)\n", k, x, y);
+    if(sh)
+    {
+        sh->color = (t_vec3){255, 0, 0};
+        reset_show(ctx);
+    }
+    return (0);
+}
+
+int handle_key_down(int key, t_ctx *ctx)
+{
+    t_control *ctrl = &ctx->control;
     if (key == 65363 && ctrl->shift) {
         virtual_resize(ctx, ctx->win_w + 200, ctx->win_h);
         return (0);
@@ -77,7 +96,7 @@ int handle_key_down(int key, t_control *ctrl)
     else if (key == ' ')
         ctrl->space = 1;
     else if (key == 65307)
-        mlx_loop_end(ctrl->mlx);
+        mlx_loop_end(ctx->mlx);
     else if (key == 't')
     {
         ctrl->reset = 1;

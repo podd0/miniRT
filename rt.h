@@ -13,8 +13,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>  // Per XConfigureEvent
 
-# define WIN_W 1600
-# define WIN_H 800
+# define WIN_W 100
+# define WIN_H 100
 # define N_BOUNCES 2
 
 # define MOVE_SPEED 0.3
@@ -120,7 +120,6 @@ void					vshape_map(t_vshape *vec, void (*f)(t_shape));
 void					vshape_map_sub(t_vshape *vec, t_shape (*f)(t_shape));
 t_shape					vshape_back(t_vshape *vec);
 
-
 typedef struct s_light
 {
 	t_vec3	pos;
@@ -147,8 +146,6 @@ typedef struct s_control
 	int		space;
 	int		reset;
 	t_vec3	delta;
-	void	*mlx;
-	struct s_ctx *ctx;
 }	t_control;
 
 typedef struct s_ctx
@@ -212,6 +209,8 @@ t_vec3	norm_color(t_vec3 color);
 
 
 void	trace(t_ctx *ctx);
+t_vec3	calc_direction(int x, int y, float fov, t_frame camera, int win_w, int win_h);
+
 t_shape	*intersect_scene(t_vec3 *p, t_vec3 direction, t_scene *scene, t_vec3 o);
 int		is_shadow(t_vec3 o, t_vec3 d, t_scene *scene, float len);
 t_vec3	shade_path(t_vec3 direction, t_vec3 o, t_scene *scene, int depth);
@@ -222,8 +221,8 @@ void	pvec(t_vec3 v);
 
 int	loop(t_ctx *ctx);
 int	handle_key_up(int key, t_control *ctrl);
-int	handle_key_down(int key, t_control *ctrl);
-
+int	handle_key_down(int key, t_ctx *ctx);
+int show_mouse(int k, int x, int y, t_ctx *ctx);
 int handle_resize(XEvent *e, void *param);
 t_img *init_image(void *mlx, int win_w, int win_h); // using this in events.c
 void reset_show(t_ctx *ctx); // using this in events.c

@@ -2,6 +2,7 @@
 #include <X11/Xutil.h>  // Per XConfigureEvent
 
 
+
 int main(int argc, char **argv)
 {
     t_ctx *ctx;
@@ -18,13 +19,11 @@ int main(int argc, char **argv)
     }
     *ctx = init(argv[1]);  // inizializza il contesto
 
-    // Imposta il puntatore nel controllo in modo che punti al contesto allocato
-    ctx->control.ctx = ctx;
-
     mlx_hook(ctx->mlx_win, 2, 1L << 0, handle_key_down, &ctx->control);
     mlx_hook(ctx->mlx_win, 3, 1L << 1, handle_key_up, &ctx->control);
     mlx_hook(ctx->mlx_win, 17, 1L << 17, mlx_loop_end, ctx->mlx);
     mlx_hook(ctx->mlx_win, ConfigureNotify, StructureNotifyMask, (int (*)(XEvent *, void *))handle_resize, ctx);
+    mlx_mouse_hook(ctx->mlx_win, show_mouse, ctx);
 
     mlx_loop_hook(ctx->mlx, loop, ctx);
     mlx_loop(ctx->mlx);

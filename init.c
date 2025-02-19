@@ -49,32 +49,12 @@ t_ctx init(char *filename)
     ctx.mlx = mlx_init();
     ctx.mlx_win = mlx_new_window(ctx.mlx, ctx.win_w, ctx.win_h, "miniRT");
 
-    {
-        Display *dpy = *((Display **)ctx.mlx); // Extract Display by MLX structure
-        printf("Forzo il resize...\n");
-        XResizeWindow(dpy, (Window)ctx.mlx_win, ctx.win_w + 600, ctx.win_h + 600);
-        Window win = (Window)ctx.mlx_win;
-        XSizeHints *hints = XAllocSizeHints();
-        if (hints)
-        {
-            hints->flags = PMinSize | PMaxSize;
-            hints->min_width = 100;
-            hints->min_height = 100;
-            hints->max_width = 10000;
-            hints->max_height = 10000;
-            XSetWMNormalHints(dpy, win, hints);
-            XFree(hints);
-        }
-    }
-
     ctx.img = init_image(ctx.mlx, ctx.win_w, ctx.win_h);
     if (!ctx.scene || !ctx.mlx || !ctx.mlx_win)
     {
         ft_putstr_fd("Error\n", 2);
         exit(1);
     }
-    ctx.control.mlx = ctx.mlx;
-    ctx.control.ctx = &ctx;
     return (ctx);
 }
 
