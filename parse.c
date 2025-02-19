@@ -342,11 +342,14 @@ t_scene	*parse_init(t_scene *scene, int fd)
 void	set_methods(t_methods *methods)
 {
 	methods[SPHERE].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_sphere;
-	methods[SPHERE].normal = (t_vec3 (*)(void *, t_vec3)) sphere_normal;
 	methods[PLANE].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_plane;
-	methods[PLANE].normal = (t_vec3 (*)(void *, t_vec3)) plane_normal;
 	methods[CYLINDER].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_cylinder;
+	methods[SPHERE].normal = (t_vec3 (*)(void *, t_vec3)) sphere_normal;
+	methods[PLANE].normal = (t_vec3 (*)(void *, t_vec3)) plane_normal;
 	methods[CYLINDER].normal = (t_vec3 (*)(void *, t_vec3))cylinder_normal;
+	methods[SPHERE].move = (void (*) (void *shape, t_vec3 delta)) move_sphere;
+	methods[PLANE].move = (void (*) (void *shape, t_vec3 delta)) move_plane;
+	methods[CYLINDER].move = (void (*) (void *shape, t_vec3 delta)) move_cylinder;
 }
 
 t_scene	*parse(char *filename)

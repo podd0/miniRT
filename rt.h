@@ -87,6 +87,7 @@ typedef struct s_methods
 {
 	float	(*intersect)(void *shape, t_vec3 origin, t_vec3 direction);
 	t_vec3	(*normal)(void *shape, t_vec3 point);
+	void	(*move)(void *shape, t_vec3 delta);
 }	t_methods;
 
 typedef struct s_shape
@@ -147,6 +148,8 @@ typedef struct s_control
 
 typedef struct s_ctx
 {
+	t_shape		*selected;
+	t_vec3		selection_color;
 	t_scene		*scene;
 	void		*mlx;
 	void		*mlx_win;
@@ -216,13 +219,16 @@ void	update_show(t_ctx *ctx);
 
 void	pvec(t_vec3 v);
 
-int	loop(t_ctx *ctx);
-int	handle_key_up(int key, t_control *ctrl);
-int	handle_key_down(int key, t_ctx *ctx);
-int show_mouse(int k, int x, int y, t_ctx *ctx);
-t_img *init_image(void *mlx, int win_w, int win_h); // using this in events.c
-void reset_show(t_ctx *ctx); // using this in events.c
-void virtual_resize(t_ctx *ctx, int new_w, int new_h);
+int		loop(t_ctx *ctx);
+int		handle_key_up(int key, t_control *ctrl);
+int		handle_key_down(int key, t_ctx *ctx);
+int		handle_mouse(int k, int x, int y, t_ctx *ctx);
+t_img	*init_image(void *mlx, int win_w, int win_h); // using this in events.c
+void	reset_show(t_ctx *ctx); // using this in events.c
+void	virtual_resize(t_ctx *ctx, int new_w, int new_h);
+void	move_sphere(t_sphere *sp, t_vec3 delta);
+void	move_plane(t_plane *pl, t_vec3 delta);
+void	move_cylinder(t_cylinder *cy, t_vec3 delta);
 
 
 

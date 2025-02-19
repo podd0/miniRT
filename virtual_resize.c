@@ -18,7 +18,7 @@ void virtual_resize(t_ctx *ctx, int new_w, int new_h)
     mlx_hook(ctx->mlx_win, 2, 1L << 0, handle_key_down, ctx);
     mlx_hook(ctx->mlx_win, 3, 1L << 1, handle_key_up, &ctx->control);
     mlx_hook(ctx->mlx_win, 17, 1L << 17, mlx_loop_end, ctx->mlx);
-    mlx_mouse_hook(ctx->mlx_win, show_mouse, ctx);
+    mlx_mouse_hook(ctx->mlx_win, handle_mouse, ctx);
 
     reset_show(ctx);
 }

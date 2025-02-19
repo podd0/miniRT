@@ -2,8 +2,14 @@
 
 void	apply_movement(t_ctx *ctx)
 {
-	ctx->scene->camera.o = add(norm(v_to_frame(ctx->control.delta, ctx->scene->camera), MOVE_SPEED), ctx->scene->camera.o);
-	printf("moving by "); pvec(ctx->control.delta); printf("\n");
+    t_vec3  movement;
+
+    movement = norm(v_to_frame(ctx->control.delta, ctx->scene->camera), MOVE_SPEED);
+    if (ctx->selected)
+        ctx->selected->methods->move(ctx->selected->obj, movement);
+    else
+        ctx->scene->camera.o = add(movement, ctx->scene->camera.o);
+	// printf("moving by "); pvec(ctx->control.delta); printf("\n");
 }
 
 void	reset_show(t_ctx *ctx)
@@ -40,7 +46,16 @@ int	loop(t_ctx *ctx)
 	return (0);
 }
 
-int show_mouse(int k, int x, int y, t_ctx *ctx)
+void clear_selection(t_ctx *ctx)
+{
+    if (!ctx->selected)
+        return ;
+    ctx->selected->color = ctx->selection_color;
+    ctx->selected = NULL;
+    ctx->control.reset = 1;
+}
+
+int handle_mouse(int k, int x, int y, t_ctx *ctx)
 {
     t_vec3  direction;
     t_vec3  p;
@@ -51,10 +66,13 @@ int show_mouse(int k, int x, int y, t_ctx *ctx)
     direction = calc_direction(x, y, ctx->scene->fov, ctx->scene->camera, ctx->win_w, ctx->win_h);
     sh = intersect_scene(&p, direction, ctx->scene, ctx->scene->camera.o);
     // printf("key = %d, pos = (%d, %d)\n", k, x, y);
+    clear_selection(ctx);
     if(sh)
     {
-        sh->color = (t_vec3){255, 0, 0};
-        reset_show(ctx);
+        ctx->selection_color = sh->color;
+        sh->color = (t_vec3){1, 0, 0};
+        ctx->selected = sh;
+        ctx->control.reset = 1;
     }
     return (0);
 }
@@ -62,6 +80,10 @@ int show_mouse(int k, int x, int y, t_ctx *ctx)
 int handle_key_down(int key, t_ctx *ctx)
 {
     t_control *ctrl = &ctx->control;
+    if (key == 65293)
+    {
+        clear_selection(ctx);
+    }
     if (key == 65363 && ctrl->shift) {
         virtual_resize(ctx, ctx->win_w + 200, ctx->win_h);
         return (0);

@@ -40,7 +40,7 @@ t_ctx init(char *filename)
 {
     t_ctx ctx;
 
-    ft_bzero(&ctx.control, sizeof(t_control));
+    ft_bzero(&ctx, sizeof(t_ctx));
     ctx.rounds = 0;
     ctx.win_w = WIN_W;
     ctx.win_h = WIN_H;
