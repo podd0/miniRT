@@ -10,9 +10,6 @@
 # include <fcntl.h>
 # include <unistd.h>
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>  // Per XConfigureEvent
-
 # define WIN_W 100
 # define WIN_H 100
 # define N_BOUNCES 2
@@ -223,7 +220,6 @@ int	loop(t_ctx *ctx);
 int	handle_key_up(int key, t_control *ctrl);
 int	handle_key_down(int key, t_ctx *ctx);
 int show_mouse(int k, int x, int y, t_ctx *ctx);
-int handle_resize(XEvent *e, void *param);
 t_img *init_image(void *mlx, int win_w, int win_h); // using this in events.c
 void reset_show(t_ctx *ctx); // using this in events.c
 void virtual_resize(t_ctx *ctx, int new_w, int new_h);
