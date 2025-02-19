@@ -6,7 +6,7 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 22:59:28 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/18 16:44:57 by amema            ###   ########.fr       */
+/*   Updated: 2025/02/19 13:03:02 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -339,7 +339,7 @@ t_scene	*parse_init(t_scene *scene, int fd)
 		if (parse_element(scene, splitted))
 		{
 			free_scene(scene);
-			puts(trimmed);
+			// puts(trimmed);
 			ft_split_free(splitted);
 			free(trimmed);
 			return (NULL);
@@ -358,7 +358,6 @@ void	set_methods(t_methods *methods)
 	methods[PLANE].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_plane;
 	methods[PLANE].normal = (t_vec3 (*)(void *, t_vec3)) plane_normal;
 	methods[CYLINDER].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_cylinder;
-	// methods[CYLINDER].normal = (float (*)(void *, t_vec3,  t_vec3))cylinder_normal;
 	methods[CYLINDER].normal = (t_vec3 (*)(void *, t_vec3))cylinder_normal;
 }
 

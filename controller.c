@@ -40,7 +40,6 @@ int	loop(t_ctx *ctx)
 	return (0);
 }
 
-
 int	handle_key_down(int key, t_control *ctrl)
 {
 	printf("press key (%d)\n", key);

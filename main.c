@@ -3,17 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/30 18:33:37 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/13 23:14:54 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/02/19 13:01:46 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <rt.h>
-
-
-
 
 int main(int argc, char **argv)
 {
@@ -24,13 +21,18 @@ int main(int argc, char **argv)
 		return (0);
 	}
 	ctx = init(argv[1]);
-	// trace(&ctx);
 	mlx_hook(ctx.mlx_win, 2, 1L << 0, handle_key_down, &ctx.control);
 	mlx_hook(ctx.mlx_win, 3, 1L << 1, handle_key_up, &ctx.control);
 	mlx_hook(ctx.mlx_win, 17, 1L << 17, mlx_loop_end, ctx.mlx);
 	mlx_loop_hook(ctx.mlx, loop, &ctx);
 	mlx_loop(ctx.mlx);
-
+	free_scene(ctx.scene);
+	free(ctx.img_vec);
+	mlx_destroy_window(ctx.mlx, ctx.mlx_win);
+	mlx_destroy_image(ctx.mlx, ctx.img->img);
+	free(ctx.img);
+	mlx_destroy_display(ctx.mlx);
+	free(ctx.mlx);
 }
 
 void	pvec(t_vec3 v)

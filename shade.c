@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   shade.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 00:49:10 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/18 12:22:02 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/02/19 13:07:22 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ t_vec3	shade_path(t_vec3 direction, t_vec3 o, t_scene *scene, int depth)
 	normal = shape->methods->normal(shape->obj, p);
 	if (dot(normal, direction) > 0)
 		normal = neg(normal);
-	p = add(scale(3e-5, normal), p);
+	p = add(scale(EPS, normal), p);
 	color = lights(p, normal, scene);
 	if (depth == 0)
 		return (color);
@@ -92,7 +92,7 @@ t_vec3	shade_ray(t_vec3 direction, t_vec3 o, t_scene *scene)
 	normal = shape->methods->normal(shape->obj, p);
 	if (dot(normal, direction) > 0)
 		normal = neg(normal);
-	p = add(scale(3e-5, normal), p);
+	p = add(scale(EPS, normal), p);
 	color = lights(p, normal, scene);
 	color = add(color,  scene->ambient_color);
 	return (pairwise_mul(color,  shape->color));

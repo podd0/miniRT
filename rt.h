@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/02 21:58:35 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/16 00:26:36 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/02/19 13:05:55 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 # define N_BOUNCES 2
 
 # define MOVE_SPEED 0.3
+# define EPS 5e-5
 
 # define ACES_A 2.51f
 # define ACES_B 0.03f

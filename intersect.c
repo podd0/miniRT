@@ -150,17 +150,9 @@ float	intersect_cylinder_base(t_cylinder *cy, t_vec3 origin, t_vec3 direction)
 float	intersect_cylinder(t_cylinder *cy, t_vec3 origin, t_vec3 direction)
 {
 	float	f;
-	//float	fc;
 
 	f = intersect_cylinder_side(cy, origin, direction);
-	//fc = f;
 	f = fminf(f, intersect_cylinder_base(cy, origin, direction));
-	// if (fc == f)
-	// {
-	// 	printf("SIDE\n");
-	// }
-	// else
-	// 	printf("BASE\n");
 	return (f);
 }
 
