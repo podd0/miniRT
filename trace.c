@@ -1,18 +1,8 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   trace.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/06 21:18:20 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/19 13:07:47 by amema            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <rt.h>
+#include <stdio.h> // per debug
 
-t_vec3	calc_direction(int x, int y, float fov, t_frame camera)
+// calc_direction: riceve le dimensioni dinamiche (ctx->win_w, ctx->win_h) come argomenti,
+t_vec3	calc_direction(int x, int y, float fov, t_frame camera, int win_w, int win_h)
 {
 	float	unit_rot;
 	t_vec3	v;
@@ -21,9 +11,12 @@ t_vec3	calc_direction(int x, int y, float fov, t_frame camera)
 
 	dx = drand48() - 0.5;
 	dy = drand48() - 0.5;
-	x -= WIN_W / 2;
-	y -= WIN_H / 2;
-	unit_rot = fov / WIN_W;
+
+	// Centra il pixel con i valori dinamici
+	x -= win_w / 2;
+	y -= win_h / 2;
+
+	unit_rot = fov / win_w;
 	v = rotx((dy + y) * unit_rot).z;
 	v = to_world(v, roty((dx + x) * unit_rot));
 	return (to_world(v, camera));
@@ -56,11 +49,9 @@ t_shape	*intersect_scene(t_vec3 *p, t_vec3 direction, t_scene *scene, t_vec3 o)
 		}
 		i++;
 	}
-	if(best)
+	if (best)
 	{
 		*p = ray_at(mn, direction, o);
-		// t_sphere *sp = best->obj;
-		// printf("Error = %f\n", vec_length(sub(*p, sp->center)) - sp->radius);
 	}
 	return (best);
 }
@@ -88,6 +79,8 @@ int	is_shadow(t_vec3 o, t_vec3 d, t_scene *scene, float len)
 	}
 	return (0);
 }
+
+
 t_vec3	clamp(t_vec3 v)
 {
 	v.x = fmin(v.x, 255.2);
@@ -98,16 +91,17 @@ t_vec3	clamp(t_vec3 v)
 	v.z = fmax(v.z, 0);
 	return (v);
 }
+
 t_vec3	cvec(float f)
 {
 	return ((t_vec3){f, f, f});
 }
 
-t_vec3 aces_tone_mapping(t_vec3 color) {
-
-	t_vec3	numerator;
-	t_vec3	denominator;
-	t_vec3	res;
+t_vec3 aces_tone_mapping(t_vec3 color)
+{
+	t_vec3 numerator;
+	t_vec3 denominator;
+	t_vec3 res;
 	
 	numerator = pairwise_mul(color, add(scale(ACES_A, color), cvec(ACES_B)));
 	denominator = add(pairwise_mul(color, add(scale(ACES_C, color), cvec(ACES_D))), cvec(ACES_E));
@@ -117,62 +111,78 @@ t_vec3 aces_tone_mapping(t_vec3 color) {
 
 t_vec3	tone_map(t_vec3 v)
 {
-	// v = scale(1.0/255, v);
-	v.x /= v.x+1;
-	v.y /= v.y+1;
-	v.z /= v.z+1;
+	v.x /= v.x + 1.0;
+	v.y /= v.y + 1.0;
+	v.z /= v.z + 1.0;
 	v = scale(255, v);
 
 	return (v);
 }
 
+/*
+update_image:
+Using: ctx->win_w e ctx->win_h invece delle macro 
+Calcola l'indice come y * ctx->win_w + x per accedere a img_vec
+Usa calc_direction con i par dinamici
+*/
 void	update_image(t_ctx *ctx)
 {
-	int		x;
-	int		y;
+	int		x, y;
+	int		index;
 	t_vec3	direction;
 	t_vec3	color;
 
-	x = 0;
-	while (x < WIN_W)
+	// printf("update_image: win_w=%d, win_h=%d, total=%d, img_vec=%p\n",
+		// ctx->win_w, ctx->win_h, ctx->win_w * ctx->win_h, (void *)ctx->img_vec);
+
+	for (x = 0; x < ctx->win_w; x++)
 	{
-		y = 0;
-		while (y < WIN_H)
+		for (y = 0; y < ctx->win_h; y++)
 		{
-			direction = calc_direction(x, y, ctx->scene->fov, ctx->scene->camera);
+			index = y * ctx->win_w + x;
+			// calcolo della direzione con dimensioni dinamiche
+			direction = calc_direction(x, y, ctx->scene->fov, ctx->scene->camera,
+			                           ctx->win_w, ctx->win_h);
+
+			// calcolo del colore (shade_ray o shade_path)
 			if (ctx->control.path_tracing)
 				color = shade_path(direction, ctx->scene->camera.o, ctx->scene, N_BOUNCES);
 			else 
 				color = shade_ray(direction, ctx->scene->camera.o, ctx->scene);
-			ctx->img_vec[x*WIN_H + y] = add(ctx->img_vec[x*WIN_H + y], color);
-			y++;
+
+			// aggiorno il buffer
+			ctx->img_vec[index] = add(ctx->img_vec[index], color);
 		}
-		x++;
 	}
 }
 
+/*
+show_image:
+ctx->win_w e ctx->win_h per iterare, e calcola l'indice come y * ctx->win_w + x.
+than tone mapping + pixel_put.
+*/
 void	show_image(t_ctx *ctx, int rounds)
 {
+	int		x, y, index;
 	t_vec3	color;
-	int		x;
-	int		y;
 
-	x = 0;
-	while (x < WIN_W)
+	for (x = 0; x < ctx->win_w; x++)
 	{
-		y = 0;
-		while (y < WIN_H)
+		for (y = 0; y < ctx->win_h; y++)
 		{
-			color = scale(1.0/rounds, ctx->img_vec[x*WIN_H + y]);
+			index = y * ctx->win_w + x;
+			color = scale(1.0/rounds, ctx->img_vec[index]);
 			color = aces_tone_mapping(color);
 			pixel_put(ctx->img, x, y, color);
-			y++;
 		}
-		x++;
 	}
 	mlx_put_image_to_window(ctx->mlx, ctx->mlx_win, ctx->img->img, 0, 0);
 }
 
+/*
+** update_show:
+** Aumenta rounds, chiama update_image e poi show_image.
+*/
 void	update_show(t_ctx *ctx)
 {
 	ctx->rounds += 1;
@@ -180,15 +190,22 @@ void	update_show(t_ctx *ctx)
 	show_image(ctx, ctx->rounds);
 }
 
+/*
+** trace:
+** Alloca il buffer con dimensioni ctx->win_w * ctx->win_h.
+** Entra in un loop infinito chiamando update_show.
+*/
 void	trace(t_ctx *ctx)
 {
 	ctx->rounds = 0;
-	ctx->img_vec = ft_calloc(WIN_H * WIN_W, sizeof(t_vec3));
-
+	ctx->img_vec = ft_calloc(ctx->win_w * ctx->win_h, sizeof(t_vec3));
+	if (!ctx->img_vec) {
+		printf("Errore nell'allocazione di img_vec\n");
+		exit(1);
+	}
 	while (1)
 	{
 		update_show(ctx); 
 		printf("Round %d\n", ctx->rounds);
 	}
 }
-

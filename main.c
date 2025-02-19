@@ -1,39 +1,45 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/30 18:33:37 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/19 13:01:46 by amema            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <rt.h>
+#include <X11/Xutil.h>  // Per XConfigureEvent
+
 
 int main(int argc, char **argv)
 {
-	t_ctx	ctx;
-	if (argc != 2)
-	{
-		printf("Usage : %s SCENE\n", argv[0]);
-		return (0);
-	}
-	ctx = init(argv[1]);
-	mlx_hook(ctx.mlx_win, 2, 1L << 0, handle_key_down, &ctx.control);
-	mlx_hook(ctx.mlx_win, 3, 1L << 1, handle_key_up, &ctx.control);
-	mlx_hook(ctx.mlx_win, 17, 1L << 17, mlx_loop_end, ctx.mlx);
-	mlx_loop_hook(ctx.mlx, loop, &ctx);
-	mlx_loop(ctx.mlx);
-	free_scene(ctx.scene);
-	free(ctx.img_vec);
-	mlx_destroy_window(ctx.mlx, ctx.mlx_win);
-	mlx_destroy_image(ctx.mlx, ctx.img->img);
-	free(ctx.img);
-	mlx_destroy_display(ctx.mlx);
-	free(ctx.mlx);
+    t_ctx *ctx;
+    if (argc != 2)
+    {
+        printf("Usage : %s SCENE\n", argv[0]);
+        return (0);
+    }
+    ctx = malloc(sizeof(t_ctx));
+    if (!ctx)
+    {
+        perror("malloc");
+        return (1);
+    }
+    *ctx = init(argv[1]);  // inizializza il contesto
+
+    // Imposta il puntatore nel controllo in modo che punti al contesto allocato
+    ctx->control.ctx = ctx;
+
+    mlx_hook(ctx->mlx_win, 2, 1L << 0, handle_key_down, &ctx->control);
+    mlx_hook(ctx->mlx_win, 3, 1L << 1, handle_key_up, &ctx->control);
+    mlx_hook(ctx->mlx_win, 17, 1L << 17, mlx_loop_end, ctx->mlx);
+    mlx_hook(ctx->mlx_win, ConfigureNotify, StructureNotifyMask, (int (*)(XEvent *, void *))handle_resize, ctx);
+
+    mlx_loop_hook(ctx->mlx, loop, ctx);
+    mlx_loop(ctx->mlx);
+
+    free_scene(ctx->scene);
+    free(ctx->img_vec);
+    mlx_destroy_window(ctx->mlx, ctx->mlx_win);
+    mlx_destroy_image(ctx->mlx, ctx->img->img);
+    free(ctx->img);
+    mlx_destroy_display(ctx->mlx);
+    free(ctx->mlx);
+    free(ctx);
+    return (0);
 }
+
 
 void	pvec(t_vec3 v)
 {

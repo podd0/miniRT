@@ -10,7 +10,7 @@ void	reset_show(t_ctx *ctx)
 {
 	ctx->rounds = 0;
 	ctx->control.reset = 0;
-	ft_bzero(ctx->img_vec, WIN_H * WIN_W * sizeof(t_vec3));	
+	ft_bzero(ctx->img_vec, ctx->win_w * ctx->win_h * sizeof(t_vec3));	
 }
 
 int move(t_ctx* ctx)
@@ -40,30 +40,48 @@ int	loop(t_ctx *ctx)
 	return (0);
 }
 
-int	handle_key_down(int key, t_control *ctrl)
+int handle_key_down(int key, t_control *ctrl)
 {
-	printf("press key (%d)\n", key);
-	if (key == 65505 || key == 65506)
-		ctrl->shift++;
-	else if (key == 'w')
-		ctrl->delta.z += 1;
-	else if (key == 's')
-		ctrl->delta.z += -1;
-	else if (key == 'a')
-		ctrl->delta.x += 1;
-	else if (key == 'd')
-		ctrl->delta.x += -1;
-	else if (key == ' ')
-		ctrl->space = 1;
-	else if (key == 65307)
-		mlx_loop_end(ctrl->mlx);
-	else if (key == 't')
-	{
-		ctrl->reset = 1;
-		ctrl->path_tracing = !ctrl->path_tracing;
-	}
-	return (0);
+    // Se premi 'r', aumenta la risoluzione virtuale
+    if (key == 'r') {
+        t_ctx *ctx = ctrl->ctx;
+        virtual_resize(ctx, ctx->win_w + 200, ctx->win_h + 200);
+        return (0);
+    }
+    // Se premi 'f', diminuisci la risoluzione virtuale
+    if (key == 'f') {
+        t_ctx *ctx = ctrl->ctx;
+        int new_w = ctx->win_w - 200;
+        int new_h = ctx->win_h - 200;
+        if (new_w < 100) new_w = 100;
+        if (new_h < 100) new_h = 100;
+        virtual_resize(ctx, new_w, new_h);
+        return (0);
+    }
+    // ... (gestione altri tasti)
+    printf("press key (%d)\n", key);
+    if (key == 65505 || key == 65506)
+        ctrl->shift++;
+    else if (key == 'w')
+        ctrl->delta.z += 1;
+    else if (key == 's')
+        ctrl->delta.z += -1;
+    else if (key == 'a')
+        ctrl->delta.x += 1;
+    else if (key == 'd')
+        ctrl->delta.x += -1;
+    else if (key == ' ')
+        ctrl->space = 1;
+    else if (key == 65307)
+        mlx_loop_end(ctrl->mlx);
+    else if (key == 't')
+    {
+        ctrl->reset = 1;
+        ctrl->path_tracing = !ctrl->path_tracing;
+    }
+    return (0);
 }
+
 
 int	handle_key_up(int key, t_control *ctrl)
 {

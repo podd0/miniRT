@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   rt.h                                               :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/02 21:58:35 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/19 13:05:55 by amema            ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef RT_H
 # define RT_H
 # include <get_next_line.h>
@@ -21,6 +9,9 @@
 # include <mlx.h>
 # include <fcntl.h>
 # include <unistd.h>
+
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>  // Per XConfigureEvent
 
 # define WIN_W 1600
 # define WIN_H 800
@@ -60,6 +51,8 @@ typedef struct s_img
 	int							bits_per_pixel;
 	int							line_length;
 	int							endian;
+	int							width;
+	int							height;
 }								t_img;
 
 typedef struct s_sphere
@@ -155,6 +148,7 @@ typedef struct s_control
 	int		reset;
 	t_vec3	delta;
 	void	*mlx;
+	struct s_ctx *ctx;
 }	t_control;
 
 typedef struct s_ctx
@@ -166,6 +160,8 @@ typedef struct s_ctx
 	t_vec3		*img_vec;
 	int			rounds;
 	t_control	control;
+	int			win_w;  // current_w
+	int			win_h;  // currend_h
 }	t_ctx;
 
 t_vec3	add(const t_vec3 a, const t_vec3 b);
@@ -227,5 +223,12 @@ void	pvec(t_vec3 v);
 int	loop(t_ctx *ctx);
 int	handle_key_up(int key, t_control *ctrl);
 int	handle_key_down(int key, t_control *ctrl);
+
+int handle_resize(XEvent *e, void *param);
+t_img *init_image(void *mlx, int win_w, int win_h); // using this in events.c
+void reset_show(t_ctx *ctx); // using this in events.c
+void virtual_resize(t_ctx *ctx, int new_w, int new_h);
+
+
 
 #endif
