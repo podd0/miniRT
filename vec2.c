@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   vec2.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/25 15:30:51 by amema             #+#    #+#             */
+/*   Updated: 2025/02/25 15:31:43 by amema            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <rt.h>
 
 t_vec3	cross(const t_vec3 a, const t_vec3 b)
 {
-	t_vec3 res;
+	t_vec3	res;
 
 	res.x = a.y * b.z - a.z * b.y;
 	res.y = a.z * b.x - a.x * b.z;
@@ -12,12 +24,12 @@ t_vec3	cross(const t_vec3 a, const t_vec3 b)
 
 float	vec_length(t_vec3 v)
 {
-	return sqrt(dot(v, v));
+	return (sqrt(dot(v, v)));
 }
 
 t_vec3	norm(t_vec3 v, float target_len)
 {
-	return scale(target_len/vec_length(v), v);
+	return (scale(target_len / vec_length(v), v));
 }
 
 t_vec3	pairwise_mul(t_vec3 a, t_vec3 b)

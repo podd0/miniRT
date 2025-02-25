@@ -1,4 +1,16 @@
-#include <rt.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   intersect.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/25 13:36:28 by amema             #+#    #+#             */
+/*   Updated: 2025/02/25 13:39:13 by amema            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "rt.h"
 
 float	intersect_sphere(t_sphere *s, t_vec3 origin, t_vec3 direction)
 {
@@ -36,9 +48,7 @@ float	intersect_plane(t_plane *pl, t_vec3 origin, t_vec3 direction)
 
 	d_norm = dot(direction, pl->normal);
 	if (d_norm == 0)
-	{
 		return (INFINITY);
-	}
 	temp = (pl->offset - dot(origin, pl->normal));
 	return (temp / d_norm);
 }
@@ -97,8 +107,8 @@ float	intersect_circle(t_cylinder *cy, t_vec3 direction, t_vec3 v)
 	direction.z = 0;
 	v.z = 0;
 	c = dot(v, v) - (cy->radius * cy->radius);
-	num_solutions = solve_quadratic(dot(direction, direction), 2
-			* dot(direction, v), c, solutions);
+	num_solutions = solve_quadratic(dot(direction, direction),
+			2 * dot(direction, v), c, solutions);
 	if (num_solutions == 0)
 		return (INFINITY);
 	if (num_solutions == 1)
@@ -135,14 +145,13 @@ float	intersect_cylinder_base(t_cylinder *cy, t_vec3 origin, t_vec3 direction)
 	pl.normal = norm(sub(cy->b, cy->a), 1.0);
 	pl.offset = dot(pl.normal, cy->a);
 	f = intersect_plane(&pl, origin, direction);
-	if (f > 0 && vec_length(sub(ray_at(f, direction, origin),
-				cy->a)) < cy->radius)
+	if (f > 0 && vec_length(sub(ray_at(f, direction, origin), cy->a))
+		< cy->radius)
 		res = f;
-	// return (res);
 	pl.offset = dot(pl.normal, cy->b);
 	f = intersect_plane(&pl, origin, direction);
-	if (f > 0 && vec_length(sub(ray_at(f, direction, origin),
-				cy->b)) < cy->radius)
+	if (f > 0 && vec_length(sub(ray_at(f, direction, origin), cy->b))
+		< cy->radius)
 		res = fminf(res, f);
 	return (res);
 }
@@ -160,13 +169,9 @@ t_vec3	cylinder_normal(t_cylinder *cy, t_vec3 point)
 {
 	point = to_frame(point, cy->fr);
 	if (point.z < 1e-5)
-	{
 		return (neg(cy->fr.z));
-	}
 	if (point.z > cy->height - 1e-5)
-	{
 		return (cy->fr.z);
-	}
 	point.z = 0;
 	return (norm(v_to_world(point, cy->fr), 1.0));
 }

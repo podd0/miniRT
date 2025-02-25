@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/25 14:13:05 by amema             #+#    #+#             */
+/*   Updated: 2025/02/25 14:30:58 by amema            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <rt.h>
 
 int	get_sign(char **str, int *err)
@@ -63,7 +75,6 @@ float	parse_float(char *str, int *err)
 	return (sign * (integer + frac));
 }
 
-// Returns the length of a null-terminated array of strings
 int	arg_len(char **arr)
 {
 	int	l;
@@ -119,14 +130,14 @@ t_vec3	parse_ambient(char **args, int *fail)
 		return ((t_vec3){0, 0, 0});
 	}
 	res = parse_vec(args[2], fail);
-	return (scale(1.0/255.0* f, res));
+	return (scale(1.0 / 255.0 * f, res));
 }
 
 void	set_xy_from_z(t_frame *camera_frame)
 {
 	t_vec3	up;
 
-	if (camera_frame->z.x == 0.0 &&  camera_frame->z.z == 0.0)
+	if (camera_frame->z.x == 0.0 && camera_frame->z.z == 0.0)
 	{
 		camera_frame->x = (t_vec3){1, 0, 0};
 		if (camera_frame->z.y > 0)
@@ -138,7 +149,7 @@ void	set_xy_from_z(t_frame *camera_frame)
 			camera_frame->y = (t_vec3){0, 0, 1};
 		}
 	}
-	else 
+	else
 	{
 		up = (t_vec3){0, 1, 0};
 		camera_frame->x = norm(cross(up, camera_frame->z), 1.0);
@@ -156,12 +167,11 @@ int	parse_camera(t_scene *scene, char **args)
 	scene->camera.o = parse_vec(args[1], &fail);
 	scene->camera.z = norm(parse_vec(args[2], &fail), 1);
 	scene->fov = parse_float(args[3], &fail);
-	// scene->fov = deg_to_rad(scene->fov);
 	set_xy_from_z(&scene->camera);
 	return (fail);
 }
 
-int parse_light(t_vector *lights, char **args)
+int	parse_light(t_vector *lights, char **args)
 {
 	t_light	*light;
 	int		fail;
@@ -172,7 +182,8 @@ int parse_light(t_vector *lights, char **args)
 	light = malloc(sizeof(t_light));
 	light->pos = parse_vec(args[1], &fail);
 	light->color = parse_vec(args[3], &fail);
-	light->color = scale(1.0/255.0 * parse_float(args[2], &fail), light->color);
+	light->color = scale(1.0 / 255.0 * parse_float(args[2], &fail),
+			light->color);
 	vec_push_back(lights, light);
 	return (fail);
 }
@@ -183,7 +194,7 @@ t_shape	parse_sphere(char **args, int *fail, t_methods *methods)
 	t_shape		shape;
 
 	ft_bzero(&shape, sizeof(t_shape));
-	if(arg_len(args) != 4)
+	if (arg_len(args) != 4)
 	{
 		*fail = 1;
 		return (shape);
@@ -191,11 +202,12 @@ t_shape	parse_sphere(char **args, int *fail, t_methods *methods)
 	sphere = malloc(sizeof(t_sphere));
 	sphere->center = parse_vec(args[1], fail);
 	sphere->radius = parse_float(args[2], fail) / 2;
-	shape.color = scale(1.0/255.0, parse_vec(args[3], fail));
+	shape.color = scale(1.0 / 255.0, parse_vec(args[3], fail));
 	shape.obj = (void *)sphere;
 	shape.methods = methods;
 	return (shape);
 }
+
 t_shape	parse_plane(char **args, int *fail, t_methods *methods)
 {
 	t_plane	*plane;
@@ -203,7 +215,7 @@ t_shape	parse_plane(char **args, int *fail, t_methods *methods)
 	t_shape	shape;
 
 	ft_bzero(&shape, sizeof(t_shape));
-	if(arg_len(args) != 4)
+	if (arg_len(args) != 4)
 	{
 		*fail = 1;
 		return (shape);
@@ -213,37 +225,38 @@ t_shape	parse_plane(char **args, int *fail, t_methods *methods)
 	point = parse_vec(args[1], fail);
 	plane->normal = norm(plane->normal, 1.0);
 	plane->offset = dot(plane->normal, point);
-	shape.color = scale(1.0/255.0, parse_vec(args[3], fail));
+	shape.color = scale(1.0 / 255.0, parse_vec(args[3], fail));
 	shape.obj = (void *)plane;
 	shape.methods = methods;
 	return (shape);
 }
 
+/* var *cy = cylinder (t_cylinder) */
 t_shape	parse_cylinder(char **args, int *fail, t_methods *methods)
 {
-	t_cylinder	*cylinder;
-	t_vec3	center;
-	t_vec3	axis;
-	float	len;
-	t_shape	shape;
+	t_cylinder	*cy;
+	t_vec3		center;
+	t_vec3		axis;
+	float		len;
+	t_shape		shape;
 
 	ft_bzero(&shape, sizeof(t_shape));
-	if(arg_len(args) != 6)
+	if (arg_len(args) != 6)
 	{
 		*fail = 1;
 		return (shape);
 	}
-	cylinder = malloc(sizeof(t_cylinder));
+	cy = malloc(sizeof(t_cylinder));
 	center = parse_vec(args[1], fail);
 	axis = norm(parse_vec(args[2], fail), 1.0);
-	cylinder->radius = parse_float(args[3], fail);
+	cy->radius = parse_float(args[3], fail);
 	len = parse_float(args[4], fail);
-	cylinder->a = add(center, scale(-len*0.5, axis));
-	cylinder->b = add(center, scale(len*0.5, axis));
-	cylinder->height = len;
-	cylinder->fr = z_collinear_to_vec(sub(cylinder->b, cylinder->a), cylinder->a);
-	shape.color = scale(1.0/255.0, parse_vec(args[5], fail));
-	shape.obj = cylinder;
+	cy->a = add(center, scale(-len * 0.5, axis));
+	cy->b = add(center, scale(len * 0.5, axis));
+	cy->height = len;
+	cy->fr = z_collinear_to_vec(sub(cy->b, cy->a), cy->a);
+	shape.color = scale(1.0 / 255.0, parse_vec(args[5], fail));
+	shape.obj = cy;
 	shape.methods = methods;
 	return (shape);
 }
@@ -255,18 +268,20 @@ int	parse_object(t_scene *scene, char **args)
 	fail = 0;
 	if (ft_strncmp(args[0], "sp", 3) == 0)
 	{
-		vshape_push_back(scene->objects, parse_sphere(args, &fail, &scene->methods[SPHERE]));
-		
+		vshape_push_back(scene->objects,
+			parse_sphere(args, &fail, &scene->methods[SPHERE]));
 	}
 	else if (ft_strncmp(args[0], "pl", 3) == 0)
 	{
-		vshape_push_back(scene->objects, parse_plane(args, &fail, &scene->methods[PLANE]));
+		vshape_push_back(scene->objects,
+			parse_plane(args, &fail, &scene->methods[PLANE]));
 	}
 	else if (ft_strncmp(args[0], "cy", 3) == 0)
 	{
-		vshape_push_back(scene->objects, parse_cylinder(args, &fail, &scene->methods[CYLINDER]));
+		vshape_push_back(scene->objects,
+			parse_cylinder(args, &fail, &scene->methods[CYLINDER]));
 	}
-	else 
+	else
 		return (1);
 	return (fail);
 }
@@ -287,13 +302,14 @@ int	parse_element(t_scene *scene, char **args)
 		}
 		else if (ft_strncmp("C", args[0], 2) == 0)
 			return (parse_camera(scene, args));
-		else if(ft_strncmp("L", args[0], 2) == 0)
+		else if (ft_strncmp("L", args[0], 2) == 0)
 			return (parse_light(scene->lights, args));
 		else
 			return (1);
 	}
-	return parse_object(scene, args);
+	return (parse_object(scene, args));
 }
+
 void	free_shape(t_shape shape)
 {
 	free(shape.obj);
@@ -308,8 +324,6 @@ void	free_scene(t_scene *scene)
 	free(scene);
 }
 
-// initialize scene with the contents of filename and return scene,
-// return NULL and free scene on error
 t_scene	*parse_init(t_scene *scene, int fd)
 {
 	char	*line;
@@ -327,7 +341,6 @@ t_scene	*parse_init(t_scene *scene, int fd)
 		if (parse_element(scene, splitted))
 		{
 			free_scene(scene);
-			// puts(trimmed);
 			ft_split_free(splitted);
 			free(trimmed);
 			return (NULL);
@@ -341,15 +354,18 @@ t_scene	*parse_init(t_scene *scene, int fd)
 
 void	set_methods(t_methods *methods)
 {
-	methods[SPHERE].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_sphere;
-	methods[PLANE].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_plane;
-	methods[CYLINDER].intersect = (float (*)(void *, t_vec3,  t_vec3))intersect_cylinder;
-	methods[SPHERE].normal = (t_vec3 (*)(void *, t_vec3)) sphere_normal;
-	methods[PLANE].normal = (t_vec3 (*)(void *, t_vec3)) plane_normal;
+	methods[SPHERE].intersect = (float (*)(void *, t_vec3, t_vec3))
+		intersect_sphere;
+	methods[PLANE].intersect = (float (*)(void *, t_vec3, t_vec3))
+		intersect_plane;
+	methods[CYLINDER].intersect = (float (*)(void *, t_vec3, t_vec3))
+		intersect_cylinder;
+	methods[SPHERE].normal = (t_vec3 (*)(void *, t_vec3))sphere_normal;
+	methods[PLANE].normal = (t_vec3 (*)(void *, t_vec3))plane_normal;
 	methods[CYLINDER].normal = (t_vec3 (*)(void *, t_vec3))cylinder_normal;
-	methods[SPHERE].move = (void (*) (void *shape, t_vec3 delta)) move_sphere;
-	methods[PLANE].move = (void (*) (void *shape, t_vec3 delta)) move_plane;
-	methods[CYLINDER].move = (void (*) (void *shape, t_vec3 delta)) move_cylinder;
+	methods[SPHERE].move = (void (*)(void *, t_vec3))move_sphere;
+	methods[PLANE].move = (void (*)(void *, t_vec3))move_plane;
+	methods[CYLINDER].move = (void (*)(void *, t_vec3))move_cylinder;
 }
 
 t_scene	*parse(char *filename)

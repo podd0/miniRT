@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   shade.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/25 15:01:30 by amema             #+#    #+#             */
+/*   Updated: 2025/02/25 15:14:48 by amema            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <rt.h>
 
 t_vec3	lights(t_vec3 p, t_vec3 normal, t_scene *scene)
@@ -18,8 +30,8 @@ t_vec3	lights(t_vec3 p, t_vec3 normal, t_scene *scene)
 		dist = vec_length(v);
 		if (!is_shadow(p, norm(v, 1.0), scene, dist))
 		{
-			light_contribute = scale(3/(dist * dist) * fmax(0, dot(v, normal)), light->color);
-			// light_contribute = light->color;
+			light_contribute = scale(3 / (dist * dist)
+					* fmax(0, dot(v, normal)), light->color);
 			total_light = add(total_light, light_contribute);
 		}
 		i++;
@@ -31,12 +43,13 @@ t_vec3	lambert_rebound(t_vec3 normal)
 {
 	t_vec3	random;
 
-	random.x = drand48() -0.5;
-	random.y = drand48() -0.5;
-	random.z = drand48() -0.5;
+	random.x = drand48() - 0.5;
+	random.y = drand48() - 0.5;
+	random.z = drand48() - 0.5;
 	random = norm(random, 1);
-	return add(normal, random);
+	return (add(normal, random));
 }
+
 t_vec3	shade_path(t_vec3 direction, t_vec3 o, t_scene *scene, int depth)
 {
 	t_vec3	normal;
@@ -59,9 +72,8 @@ t_vec3	shade_path(t_vec3 direction, t_vec3 o, t_scene *scene, int depth)
 		return (color);
 	rebound = lambert_rebound(normal);
 	color = add(color, shade_path(rebound, p, scene, depth - 1));
-	return (pairwise_mul(color,  shape->color));
+	return (pairwise_mul(color, shape->color));
 }
-
 
 t_vec3	shade_ray(t_vec3 direction, t_vec3 o, t_scene *scene)
 {
@@ -80,6 +92,6 @@ t_vec3	shade_ray(t_vec3 direction, t_vec3 o, t_scene *scene)
 		normal = neg(normal);
 	p = add(scale(EPS, normal), p);
 	color = lights(p, normal, scene);
-	color = add(color,  scene->ambient_color);
-	return (pairwise_mul(color,  shape->color));
+	color = add(color, scene->ambient_color);
+	return (pairwise_mul(color, shape->color));
 }
