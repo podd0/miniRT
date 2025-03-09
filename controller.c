@@ -6,7 +6,7 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:41:27 by amema             #+#    #+#             */
-/*   Updated: 2025/02/25 15:45:49 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 19:06:25 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,11 +70,15 @@ int	handle_mouse(int k, int x, int y, t_ctx *ctx)
 	t_vec3	direction;
 	t_vec3	p;
 	t_shape	*sh;
+    t_screen screen;
 
 	if (k != 1)
 		return (0);
-	direction = calc_direction(x, y, ctx->scene->fov, ctx->scene->camera,
-			ctx->win_w, ctx->win_h);
+	screen.x = x;
+    screen.y = y;
+    screen.win_w = ctx->win_w;
+    screen.win_h = ctx->win_h;
+    direction = calc_direction(screen, ctx->scene->fov, ctx->scene->camera);
 	sh = intersect_scene(&p, direction, ctx->scene, ctx->scene->camera.o);
 	clear_selection(ctx);
 	if (sh)
@@ -141,7 +145,41 @@ int	handle_key_down(int key, t_ctx *ctx)
 		ctrl->reset = 1;
 		ctrl->path_tracing = !ctrl->path_tracing;
 	}
+	
+	// transform selected object
+	if (ctx->selected)
+    {
+        if (key == 61) // '+'
+        {
+            if (ctx->selected->methods == &ctx->scene->methods[SPHERE])
+                resize_sphere((t_sphere *)ctx->selected->obj, 1.0f);
+            else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+                resize_cylinder_diameter((t_cylinder *)ctx->selected->obj, 0.5f);
+			reset_show(ctx);
+        }
+        else if (key == 45) // '-'
+        {
+            if (ctx->selected->methods == &ctx->scene->methods[SPHERE])
+                resize_sphere((t_sphere *)ctx->selected->obj, -1.0f);
+            else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+                resize_cylinder_diameter((t_cylinder *)ctx->selected->obj, -0.5f);
+			reset_show(ctx);
+        }
+        else if (key == 91) // '[' per - h cilindro
+        {
+            if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+                resize_cylinder_height((t_cylinder *)ctx->selected->obj, -0.5f);
+			reset_show(ctx);
+        }
+        else if (key == 93) // ']' per: + h cilindro
+        {
+            if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+                resize_cylinder_height((t_cylinder *)ctx->selected->obj, 0.5f);
+			reset_show(ctx);
+		}
+    }
 	return (0);
+	
 }
 
 int	handle_key_up(int key, t_control *ctrl)

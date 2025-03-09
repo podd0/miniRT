@@ -6,7 +6,7 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/02/25 15:00:14 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 18:59:53 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,15 @@ typedef struct s_ctx
 	int			win_h; /* current height */
 }	t_ctx;
 
+typedef struct s_screen
+{
+    int	x;
+    int	y;
+	int	win_w;
+	int	win_h;
+}	t_screen;
+
+
 /*
 ** Vector math
 */
@@ -242,8 +251,7 @@ t_vec3		norm_color(t_vec3 color);
 ** Ray tracing
 */
 void		trace(t_ctx *ctx);
-t_vec3		calc_direction(int x, int y, float fov, t_frame camera,
-				int win_w, int win_h);
+t_vec3		calc_direction(t_screen screen, float fov, t_frame camera);
 t_shape		*intersect_scene(t_vec3 *p, t_vec3 direction, t_scene *scene,
 				t_vec3 o);
 int			is_shadow(t_vec3 o, t_vec3 d, t_scene *scene, float len);
@@ -265,5 +273,13 @@ void		virtual_resize(t_ctx *ctx, int new_w, int new_h);
 void		move_sphere(t_sphere *sp, t_vec3 delta);
 void		move_plane(t_plane *pl, t_vec3 delta);
 void		move_cylinder(t_cylinder *cy, t_vec3 delta);
+
+/*
+** Transformations
+*/
+
+void resize_sphere(t_sphere *sp, float delta_diameter);
+void resize_cylinder_diameter(t_cylinder *cy, float delta_diameter);
+void resize_cylinder_height(t_cylinder *cy, float delta_height);
 
 #endif

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   trace.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:23:36 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 16:49:44 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/09 19:04:12 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <rt.h>
 #include <stdio.h>
 
-t_vec3	calc_direction(int x, int y, float fov, t_frame camera, int win_w, int win_h)
+t_vec3	calc_direction(t_screen screen, float fov, t_frame camera)
 {
 	float	unit_rot;
 	t_vec3	v;
@@ -22,11 +22,11 @@ t_vec3	calc_direction(int x, int y, float fov, t_frame camera, int win_w, int wi
 
 	dx = drand48() - 0.5;
 	dy = drand48() - 0.5;
-	x -= win_w / 2;
-	y -= win_h / 2;
-	unit_rot = fov / max(win_h, win_w);
-	v = rotx((dy + y) * unit_rot).z;
-	v = to_world(v, roty((dx + x) * unit_rot));
+	screen.x -= screen.win_w / 2;
+	screen.y -= screen.win_h / 2;
+	unit_rot = fov / max(screen.win_h, screen.win_w);
+	v = rotx((dy + screen.y) * unit_rot).z;
+	v = to_world(v, roty((dx + screen.x) * unit_rot));
 	return (to_world(v, camera));
 }
 
@@ -141,8 +141,8 @@ void	update_image(t_ctx *ctx)
 	{
 		x = index % ctx->win_w;
 		y = index / ctx->win_w;
-		direction = calc_direction(x, y, ctx->scene->fov,
-				ctx->scene->camera, ctx->win_w, ctx->win_h);
+		direction = calc_direction( (t_screen){x, y, ctx->win_w, ctx->win_h},
+				ctx->scene->fov, ctx->scene->camera);
 		if (ctx->control.path_tracing)
 			color = shade_path(direction, ctx->scene->camera.o,
 					ctx->scene, N_BOUNCES);
