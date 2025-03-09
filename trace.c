@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   trace.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:23:36 by amema             #+#    #+#             */
-/*   Updated: 2025/02/25 16:01:59 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 16:49:44 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,25 +136,21 @@ void	update_image(t_ctx *ctx)
 	t_vec3	direction;
 	t_vec3	color;
 
-	x = 0;
-	while (x < ctx->win_w)
+	index = 0;
+	while (index < ctx->win_w * ctx->win_h)
 	{
-		y = 0;
-		while (y < ctx->win_h)
-		{
-			index = y * ctx->win_w + x;
-			direction = calc_direction(x, y, ctx->scene->fov,
-					ctx->scene->camera, ctx->win_w, ctx->win_h);
-			if (ctx->control.path_tracing)
-				color = shade_path(direction, ctx->scene->camera.o,
-						ctx->scene, N_BOUNCES);
-			else
-				color = shade_ray(direction, ctx->scene->camera.o,
-						ctx->scene);
-			ctx->img_vec[index] = add(ctx->img_vec[index], color);
-			y++;
-		}
-		x++;
+		x = index % ctx->win_w;
+		y = index / ctx->win_w;
+		direction = calc_direction(x, y, ctx->scene->fov,
+				ctx->scene->camera, ctx->win_w, ctx->win_h);
+		if (ctx->control.path_tracing)
+			color = shade_path(direction, ctx->scene->camera.o,
+					ctx->scene, N_BOUNCES);
+		else
+			color = shade_ray(direction, ctx->scene->camera.o,
+					ctx->scene);
+		ctx->img_vec[index] = add(ctx->img_vec[index], color);
+		index++;
 	}
 }
 
