@@ -50,7 +50,7 @@ To prove that you can implement mathematical and physics formulas without being 
 
 ---
 
-## **Chapter III - Mandatory Part**  
+## **Chapter III - Mandatory Part**
 
 ### **miniRT – Specifications**  
 

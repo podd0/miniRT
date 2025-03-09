@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   interactions.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 00:25:38 by apuddu            #+#    #+#             */
-/*   Updated: 2025/02/20 00:25:45 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/02/25 13:35:00 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ void	move_plane(t_plane *pl, t_vec3 delta)
 {
 	pl->offset += dot(delta, pl->normal);
 }
+
 void	move_cylinder(t_cylinder *cy, t_vec3 delta)
 {
 	cy->a = add(cy->a, delta);

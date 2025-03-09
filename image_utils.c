@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   image_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/25 13:28:21 by amema             #+#    #+#             */
+/*   Updated: 2025/02/25 13:28:51 by amema            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <rt.h>
 
 unsigned int	col_from_vec(t_vec3 v)
@@ -9,7 +21,7 @@ void	pixel_put(t_img *img, int x, int y, t_vec3 color)
 {
 	char	*dst;
 
-	if (x >= img->width || y >= img->height || x < 0 || y < 0 )
+	if (x >= img->width || y >= img->height || x < 0 || y < 0)
 		return ;
 	dst = img->addr + (y * img->line_length + x * (img->bits_per_pixel / 8));
 	*(unsigned int *)dst = col_from_vec(color);
