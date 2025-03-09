@@ -6,7 +6,7 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 18:59:53 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 19:41:21 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,5 +281,12 @@ void		move_cylinder(t_cylinder *cy, t_vec3 delta);
 void resize_sphere(t_sphere *sp, float delta_diameter);
 void resize_cylinder_diameter(t_cylinder *cy, float delta_diameter);
 void resize_cylinder_height(t_cylinder *cy, float delta_height);
+
+/*
+** Rotations
+*/
+void rotate_plane(t_plane *pl, t_frame rot);
+void rotate_cylinder(t_cylinder *cy, t_frame rot);
+void rotate_camera(t_frame *cam, t_frame rot);
 
 #endif
