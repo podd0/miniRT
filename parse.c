@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:13:05 by amema             #+#    #+#             */
-/*   Updated: 2025/02/25 14:30:58 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 20:25:36 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,6 +366,9 @@ void	set_methods(t_methods *methods)
 	methods[SPHERE].move = (void (*)(void *, t_vec3))move_sphere;
 	methods[PLANE].move = (void (*)(void *, t_vec3))move_plane;
 	methods[CYLINDER].move = (void (*)(void *, t_vec3))move_cylinder;
+	methods[PLANE].rotate = (void (*)(void *obj, t_frame rot))rotate_plane;
+	methods[SPHERE].rotate = (void (*)(void *obj, t_frame rot))rotate_sphere;
+	methods[CYLINDER].rotate = (void (*)(void *obj, t_frame rot))rotate_cylinder;
 }
 
 t_scene	*parse(char *filename)

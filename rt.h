@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 19:41:21 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 20:26:01 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ typedef struct s_methods
 	float	(*intersect)(void *shape, t_vec3 origin, t_vec3 direction);
 	t_vec3	(*normal)(void *shape, t_vec3 point);
 	void	(*move)(void *shape, t_vec3 delta);
+	void	(*rotate)(void *obj, t_frame rot);
 }	t_methods;
 
 typedef struct s_shape
@@ -288,5 +289,6 @@ void resize_cylinder_height(t_cylinder *cy, float delta_height);
 void rotate_plane(t_plane *pl, t_frame rot);
 void rotate_cylinder(t_cylinder *cy, t_frame rot);
 void rotate_camera(t_frame *cam, t_frame rot);
+void rotate_sphere(t_sphere *sp, t_frame rot);
 
 #endif

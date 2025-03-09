@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   controller.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:41:27 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 20:15:17 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 20:30:04 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -180,7 +180,9 @@ int	handle_key_down(int key, t_ctx *ctx)
     }
 	    // Comandi di rotazione: I/K per rotazione attorno all'asse X,
     // J/L per Y, U/O per Z.
-    else if (key == 'i' || key == 'k' || key == 'j' ||
+    
+	
+	if (key == 'i' || key == 'k' || key == 'j' ||
         key == 'l' || key == 'u' || key == 'o')
     {
 		printf("Rotazione: tasto premuto = %c\n", key);
@@ -200,10 +202,7 @@ int	handle_key_down(int key, t_ctx *ctx)
             rot = rotz(-angle);
         if (ctx->selected)
         {
-            if (ctx->selected->methods == &ctx->scene->methods[PLANE])
-                rotate_plane((t_plane *)ctx->selected->obj, rot);
-            else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
-                rotate_cylinder((t_cylinder *)ctx->selected->obj, rot);
+			ctx->selected->methods->rotate(ctx->selected->obj, rot);
         }
         else
             rotate_camera(&ctx->scene->camera, rot);

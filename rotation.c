@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rotation.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 19:33:03 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 20:12:52 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/09 20:22:47 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,13 @@ void rotate_cylinder(t_cylinder *cy, t_frame rot)
     cy->a = add(center, a_rel);
     cy->b = add(center, b_rel);
     cy->fr = z_collinear_to_vec(sub(cy->b, cy->a), cy->a);
+}
+
+void rotate_sphere(t_sphere *sp, t_frame rot)
+{
+    (void)sp;
+    (void)rot;
+    return ;
 }
 
 // ruota il frame della cam applayin rot transform
