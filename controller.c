@@ -3,35 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   controller.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:41:27 by amema             #+#    #+#             */
-/*   Updated: 2025/03/10 13:24:37 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/10 17:59:23 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <rt.h>
 
-void	apply_movement(t_ctx *ctx)
+void apply_movement(t_ctx *ctx)
 {
 	t_vec3	movement;
+	t_light	*light;
 
-	movement = norm(v_to_frame(ctx->control.delta, ctx->scene->camera),
-			MOVE_SPEED);
-	if (ctx->selected)
+	movement = norm(v_to_world(ctx->control.delta, ctx->scene->camera),
+					MOVE_SPEED);
+	if (ctx->control.selected_light != -1)
+	{
+		light = ctx->scene->lights->arr[ctx->control.selected_light];
+		light->pos = add(movement, light->pos);
+	}
+	else if (ctx->selected)
 		ctx->selected->methods->move(ctx->selected->obj, movement);
 	else
 		ctx->scene->camera.o = add(movement, ctx->scene->camera.o);
 }
 
-void	reset_show(t_ctx *ctx)
+void reset_show(t_ctx *ctx)
 {
 	ctx->rounds = 0;
 	ctx->control.reset = 0;
 	ft_bzero(ctx->img_vec, ctx->win_w * ctx->win_h * sizeof(t_vec3));
 }
 
-int	move(t_ctx *ctx)
+int move(t_ctx *ctx)
 {
 	if (vec_length(ctx->control.delta) != 0)
 		apply_movement(ctx);
@@ -40,14 +46,14 @@ int	move(t_ctx *ctx)
 	return (1);
 }
 
-void	preproc_ctrl(t_control *ctrl)
+void preproc_ctrl(t_control *ctrl)
 {
 	ctrl->delta.y = -(ctrl->space != 0);
 	if (ctrl->shift)
 		ctrl->delta.y *= -1;
 }
 
-int	loop(t_ctx *ctx)
+int loop(t_ctx *ctx)
 {
 	preproc_ctrl(&ctx->control);
 	if (move(ctx) || ctx->control.reset)
@@ -56,33 +62,34 @@ int	loop(t_ctx *ctx)
 	return (0);
 }
 
-void	clear_selection(t_ctx *ctx)
+void clear_selection(t_ctx *ctx)
 {
 	if (!ctx->selected)
-		return ;
+		return;
 	ctx->selected->color = ctx->selection_color;
 	ctx->selected = NULL;
 	ctx->control.reset = 1;
 }
 
-int	handle_mouse(int k, int x, int y, t_ctx *ctx)
+int handle_mouse(int k, int x, int y, t_ctx *ctx)
 {
-	t_vec3	direction;
-	t_vec3	p;
-	t_shape	*sh;
-    t_screen screen;
+	t_vec3 direction;
+	t_vec3 p;
+	t_shape *sh;
+	t_screen screen;
 
 	if (k != 1)
 		return (0);
 	screen.x = x;
-    screen.y = y;
-    screen.win_w = ctx->win_w;
-    screen.win_h = ctx->win_h;
-    direction = calc_direction(screen, ctx->scene->fov, ctx->scene->camera);
+	screen.y = y;
+	screen.win_w = ctx->win_w;
+	screen.win_h = ctx->win_h;
+	direction = calc_direction(screen, ctx->scene->fov, ctx->scene->camera);
 	sh = intersect_scene(&p, direction, ctx->scene, ctx->scene->camera.o);
 	clear_selection(ctx);
 	if (sh)
 	{
+		ctx->control.selected_light = -1;
 		ctx->selection_color = sh->color;
 		sh->color = (t_vec3){1, 0, 0};
 		ctx->selected = sh;
@@ -91,69 +98,77 @@ int	handle_mouse(int k, int x, int y, t_ctx *ctx)
 	return (0);
 }
 
-int	handle_key_down(int key, t_ctx *ctx)
+int handle_key_down(int key, t_ctx *ctx)
 {
-	t_control	*ctrl;
+	t_control *ctrl;
 	ctrl = &ctx->control;
 
-	// if (key == 65307)
-	// 	mlx_loop_end(ctx->mlx);
+	if (key == 65307)
+		mlx_loop_end(ctx->mlx);
 
 	if (key == 'm')
 	{
-		ctrl->light_mode = !ctrl->light_mode;
-		printf("Light mode: %s\n", ctrl->light_mode ? "ON" : "OFF");
+		ctrl->selected_light++;
+		if (ctrl->selected_light == ctx->scene->lights->size)
+		{
+			ctrl->selected_light = -1;
+			printf("Light mode: no light selected\n");
+		}
+		else 
+			printf("Light mode: selected light #%d\n", ctrl->selected_light);
 		reset_show(ctx);
+		clear_selection(ctx);
 		return (0);
 	}
-	
-	if (ctrl->light_mode)
-    {
-        //@ least one light in the scene
-        if (ctx->scene->lights->size > 0)
-        {
-            t_light *light = ctx->scene->lights->arr[0];
 
-            // translaction w. WASD and SPACE
-            if (key == 'w')
-                translate_light(light, (t_vec3){0, 0,  0.3f});
-            else if (key == 's')
-                translate_light(light, (t_vec3){0, 0, -0.3f});
-            else if (key == 'a')
-                translate_light(light, (t_vec3){-0.3f, 0, 0});
-            else if (key == 'd')
-                translate_light(light, (t_vec3){ 0.3f, 0, 0});
-            else if (key == ' ')
-                translate_light(light, (t_vec3){0, 0.3f, 0});
-            // rotation w. i/k/j/l/u/o
-            else if (key == 'i' || key == 'k' || key == 'j' ||
-                     key == 'l' || key == 'u' || key == 'o')
-            {
-                t_frame rot;
-                float angle = 5.0f;
-                if (key == 'i')
-                    rot = rotx(angle);
-                else if (key == 'k')
-                    rot = rotx(-angle);
-                else if (key == 'j')
-                    rot = roty(angle);
-                else if (key == 'l')
-                    rot = roty(-angle);
-                else if (key == 'u')
-                    rot = rotz(angle);
-                else // 'o'
-                    rot = rotz(-angle);
+	// if (ctrl->selected_light != -1)
+	// {
+	// 	//@ least one light in the scene
+	// 	if (ctx->scene->lights->size > 0)
+	// 	{
+	// 		t_light *light = ctx->scene->lights->arr[ctrl->selected_light];
 
-                rotate_light(light, rot);
-            }
-        }
-        reset_show(ctx);
-        return (0);
-    }
-	
+	// 		// translaction w. WASD and SPACE
+	// 		if (key == 'w')
+	// 			translate_light(light, (t_vec3){0, 0, 0.3f});
+	// 		else if (key == 's')
+	// 			translate_light(light, (t_vec3){0, 0, -0.3f});
+	// 		else if (key == 'a')
+	// 			translate_light(light, (t_vec3){-0.3f, 0, 0});
+	// 		else if (key == 'd')
+	// 			translate_light(light, (t_vec3){0.3f, 0, 0});
+	// 		else if (key == ' ')
+	// 			translate_light(light, (t_vec3){0, 0.3f, 0});
+	// 		// rotation w. i/k/j/l/u/o
+	// 		else if (key == 'i' || key == 'k' || key == 'j' ||
+	// 				 key == 'l' || key == 'u' || key == 'o')
+	// 		{
+	// 			t_frame rot;
+	// 			float angle = 5.0f;
+	// 			if (key == 'i')
+	// 				rot = rotx(angle);
+	// 			else if (key == 'k')
+	// 				rot = rotx(-angle);
+	// 			else if (key == 'j')
+	// 				rot = roty(angle);
+	// 			else if (key == 'l')
+	// 				rot = roty(-angle);
+	// 			else if (key == 'u')
+	// 				rot = rotz(angle);
+	// 			else // 'o'
+	// 				rot = rotz(-angle);
+
+	// 			rotate_light(light, rot);
+	// 		}
+	// 	}
+	// 	reset_show(ctx);
+	// 	return (0);
+	// }
+
 	if (key == 65293)
 	{
 		clear_selection(ctx);
+		ctrl->selected_light = -1;
 	}
 	if (key == 65363 && ctrl->shift)
 	{
@@ -193,84 +208,81 @@ int	handle_key_down(int key, t_ctx *ctx)
 		ctrl->delta.x += -1;
 	else if (key == ' ')
 		ctrl->space = 1;
-	else if (key == 65307)
-		mlx_loop_end(ctx->mlx);
 	else if (key == 't')
 	{
 		ctrl->reset = 1;
 		ctrl->path_tracing = !ctrl->path_tracing;
 	}
-	
+
 	// transform selected object
 	if (ctx->selected)
-    {
-        if (key == 61) // '+'
-        {
-            if (ctx->selected->methods == &ctx->scene->methods[SPHERE])
-                resize_sphere((t_sphere *)ctx->selected->obj, 1.0f);
-            else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
-                resize_cylinder_diameter((t_cylinder *)ctx->selected->obj, 0.5f);
-			reset_show(ctx);
-        }
-        else if (key == 45) // '-'
-        {
-            if (ctx->selected->methods == &ctx->scene->methods[SPHERE])
-                resize_sphere((t_sphere *)ctx->selected->obj, -1.0f);
-            else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
-                resize_cylinder_diameter((t_cylinder *)ctx->selected->obj, -0.5f);
-			reset_show(ctx);
-        }
-        else if (key == 91) // '[' per - h cilindro
-        {
-            if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
-                resize_cylinder_height((t_cylinder *)ctx->selected->obj, -0.5f);
-			reset_show(ctx);
-        }
-        else if (key == 93) // ']' per: + h cilindro
-        {
-            if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
-                resize_cylinder_height((t_cylinder *)ctx->selected->obj, 0.5f);
+	{
+		if (key == 61) // '+'
+		{
+			if (ctx->selected->methods == &ctx->scene->methods[SPHERE])
+				resize_sphere((t_sphere *)ctx->selected->obj, 1.0f);
+			else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+				resize_cylinder_diameter((t_cylinder *)ctx->selected->obj, 0.5f);
 			reset_show(ctx);
 		}
-    }
-	
+		else if (key == 45) // '-'
+		{
+			if (ctx->selected->methods == &ctx->scene->methods[SPHERE])
+				resize_sphere((t_sphere *)ctx->selected->obj, -1.0f);
+			else if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+				resize_cylinder_diameter((t_cylinder *)ctx->selected->obj, -0.5f);
+			reset_show(ctx);
+		}
+		else if (key == 91) // '[' per - h cilindro
+		{
+			if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+				resize_cylinder_height((t_cylinder *)ctx->selected->obj, -0.5f);
+			reset_show(ctx);
+		}
+		else if (key == 93) // ']' per: + h cilindro
+		{
+			if (ctx->selected->methods == &ctx->scene->methods[CYLINDER])
+				resize_cylinder_height((t_cylinder *)ctx->selected->obj, 0.5f);
+			reset_show(ctx);
+		}
+	}
+
 	// Comandi di rotazione: I/K per rotazione attorno all'asse X,
-    // J/L per Y, U/O per Z.
+	// J/L per Y, U/O per Z.
 
 	if (key == 'i' || key == 'k' || key == 'j' ||
-        key == 'l' || key == 'u' || key == 'o')
-    {
+		key == 'l' || key == 'u' || key == 'o')
+	{
 		printf("Rotazione: tasto premuto = %c\n", key);
-        t_frame rot;
-        float angle = 5.0f; // angolo in gradi per ogni pressione
-        if (key == 'i')
-            rot = rotx(angle);
-        else if (key == 'k')
-            rot = rotx(-angle);
-        else if (key == 'j')
-            rot = roty(angle);
-        else if (key == 'l')
-            rot = roty(-angle);
-        else if (key == 'u')
-            rot = rotz(angle);
-        else // (key == 'o')
-            rot = rotz(-angle);
-        if (ctx->selected)
-        {
+		t_frame rot;
+		float angle = 5.0f; // angolo in gradi per ogni pressione
+		if (key == 'i')
+			rot = rotx(angle);
+		else if (key == 'k')
+			rot = rotx(-angle);
+		else if (key == 'j')
+			rot = roty(angle);
+		else if (key == 'l')
+			rot = roty(-angle);
+		else if (key == 'u')
+			rot = rotz(angle);
+		else // (key == 'o')
+			rot = rotz(-angle);
+		if (ctx->selected)
+		{
 			ctx->selected->methods->rotate(ctx->selected->obj, rot);
-        }
-        else
-            rotate_camera(&ctx->scene->camera, rot);
-        reset_show(ctx);
-    }
+		}
+		else
+			rotate_camera(&ctx->scene->camera, rot);
+		reset_show(ctx);
+	}
 	return (0);
-	
 }
 
-int	handle_key_up(int key, t_control *ctrl)
+int handle_key_up(int key, t_control *ctrl)
 {
-	if (ctrl->light_mode)
-		return (0);
+	// if (ctrl->selected_light)
+	// 	return (0);
 	printf("press key (%d)\n", key);
 	if (key == 65505 || key == 65506)
 	{

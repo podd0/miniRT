@@ -2,3 +2,4 @@ minilibx-linux/
 *.o
 .vscode/
 .gdb_history
+rt
