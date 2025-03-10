@@ -6,7 +6,7 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 21:06:23 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/10 12:11:27 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,9 @@ typedef struct s_control
 	int		space;
 	int		reset;
 	t_vec3	delta;
+
+	int		light_mode;
+	int		active_light;
 }	t_control;
 
 typedef struct s_ctx
@@ -290,5 +293,12 @@ void rotate_plane(t_plane *pl, t_frame rot);
 void rotate_cylinder(t_cylinder *cy, t_frame rot);
 void rotate_camera(t_frame *cam, t_frame rot);
 void rotate_sphere(t_sphere *sp, t_frame rot);
+
+/*
+** Light transformations
+*/
+void translate_light(t_light *light, t_vec3 delta);
+void rotate_light(t_light *light, t_frame rot);
+void rotate_light_pivot(t_light *light, t_frame rot, t_vec3 pivot);
 
 #endif
