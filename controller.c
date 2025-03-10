@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   controller.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:41:27 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 20:30:04 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/10 13:24:37 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,8 +94,63 @@ int	handle_mouse(int k, int x, int y, t_ctx *ctx)
 int	handle_key_down(int key, t_ctx *ctx)
 {
 	t_control	*ctrl;
-
 	ctrl = &ctx->control;
+
+	// if (key == 65307)
+	// 	mlx_loop_end(ctx->mlx);
+
+	if (key == 'm')
+	{
+		ctrl->light_mode = !ctrl->light_mode;
+		printf("Light mode: %s\n", ctrl->light_mode ? "ON" : "OFF");
+		reset_show(ctx);
+		return (0);
+	}
+	
+	if (ctrl->light_mode)
+    {
+        //@ least one light in the scene
+        if (ctx->scene->lights->size > 0)
+        {
+            t_light *light = ctx->scene->lights->arr[0];
+
+            // translaction w. WASD and SPACE
+            if (key == 'w')
+                translate_light(light, (t_vec3){0, 0,  0.3f});
+            else if (key == 's')
+                translate_light(light, (t_vec3){0, 0, -0.3f});
+            else if (key == 'a')
+                translate_light(light, (t_vec3){-0.3f, 0, 0});
+            else if (key == 'd')
+                translate_light(light, (t_vec3){ 0.3f, 0, 0});
+            else if (key == ' ')
+                translate_light(light, (t_vec3){0, 0.3f, 0});
+            // rotation w. i/k/j/l/u/o
+            else if (key == 'i' || key == 'k' || key == 'j' ||
+                     key == 'l' || key == 'u' || key == 'o')
+            {
+                t_frame rot;
+                float angle = 5.0f;
+                if (key == 'i')
+                    rot = rotx(angle);
+                else if (key == 'k')
+                    rot = rotx(-angle);
+                else if (key == 'j')
+                    rot = roty(angle);
+                else if (key == 'l')
+                    rot = roty(-angle);
+                else if (key == 'u')
+                    rot = rotz(angle);
+                else // 'o'
+                    rot = rotz(-angle);
+
+                rotate_light(light, rot);
+            }
+        }
+        reset_show(ctx);
+        return (0);
+    }
+	
 	if (key == 65293)
 	{
 		clear_selection(ctx);
@@ -178,10 +233,10 @@ int	handle_key_down(int key, t_ctx *ctx)
 			reset_show(ctx);
 		}
     }
-	    // Comandi di rotazione: I/K per rotazione attorno all'asse X,
-    // J/L per Y, U/O per Z.
-    
 	
+	// Comandi di rotazione: I/K per rotazione attorno all'asse X,
+    // J/L per Y, U/O per Z.
+
 	if (key == 'i' || key == 'k' || key == 'j' ||
         key == 'l' || key == 'u' || key == 'o')
     {
@@ -208,13 +263,14 @@ int	handle_key_down(int key, t_ctx *ctx)
             rotate_camera(&ctx->scene->camera, rot);
         reset_show(ctx);
     }
-
 	return (0);
 	
 }
 
 int	handle_key_up(int key, t_control *ctrl)
 {
+	if (ctrl->light_mode)
+		return (0);
 	printf("press key (%d)\n", key);
 	if (key == 65505 || key == 65506)
 	{
