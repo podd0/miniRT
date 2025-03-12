@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/10 18:08:30 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/12 12:16:18 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,16 @@ t_vec3		ray_at(float t, t_vec3 direction, t_vec3 origin);
 t_scene		*parse(char *filename);
 void		free_scene(t_scene *scene);
 t_ctx		init(char *filename);
+t_vec3		parse_vec(char *s, int *fail);
+t_vec3		parse_ambient(char **args, int *fail);
+int			parse_element(t_scene *scene, char **args);
+int			parse_light(t_vector *lights, char **args);
+int			parse_camera(t_scene *scene, char **args);
+int			arg_len(char **arr);
+float		parse_float(char *str, int *err);
+
+
+
 
 /*
 ** Drawing
@@ -248,6 +258,9 @@ t_vec3		plane_normal(t_plane *pl, t_vec3 point);
 float		intersect_cylinder(t_cylinder *cy, t_vec3 origin, t_vec3 direction);
 t_vec3		cylinder_normal(t_cylinder *cy, t_vec3 point);
 t_vec3		norm_color(t_vec3 color);
+float	intersect_circle(t_cylinder *cy, t_vec3 direction, t_vec3 v);
+int	solve_quadratic(float a, float b, float c, float sol[2]);
+
 
 /*
 ** Ray tracing
@@ -261,6 +274,8 @@ t_vec3		shade_path(t_vec3 direction, t_vec3 o, t_scene *scene, int depth);
 t_vec3		shade_ray(t_vec3 direction, t_vec3 o, t_scene *scene);
 void		update_show(t_ctx *ctx);
 void		pvec(t_vec3 v);
+t_vec3		cvec(float f);
+t_vec3		clamp(t_vec3 v);
 
 /*
 ** Event handling and utilities

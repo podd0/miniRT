@@ -6,40 +6,11 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 13:36:28 by amema             #+#    #+#             */
-/*   Updated: 2025/02/25 13:39:13 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/12 11:47:14 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
-
-float	intersect_sphere(t_sphere *s, t_vec3 origin, t_vec3 direction)
-{
-	t_vec3	closest;
-	float	t;
-	float	short_side;
-	float	squared_radius;
-	float	other_side;
-
-	t = dot(direction, sub(s->center, origin));
-	closest = add(origin, scale(t, direction));
-	short_side = vec_length(sub(closest, s->center));
-	if (fabs(short_side - s->radius) < 1e-5)
-		return (t);
-	short_side *= short_side;
-	squared_radius = s->radius * s->radius;
-	if (short_side > squared_radius)
-		return (INFINITY);
-	other_side = sqrt(squared_radius - short_side);
-	if (t - other_side > 0)
-		return (t - other_side);
-	t += other_side;
-	return (t);
-}
-
-t_vec3	sphere_normal(t_sphere *s, t_vec3 point)
-{
-	return (scale(1 / s->radius, sub(point, s->center)));
-}
 
 float	intersect_plane(t_plane *pl, t_vec3 origin, t_vec3 direction)
 {
@@ -96,82 +67,4 @@ int	solve_quadratic(float a, float b, float c, float sol[2])
 	sol[0] = (-b - delta) / (2 * a);
 	sol[1] = (-b + delta) / (2 * a);
 	return (2);
-}
-
-float	intersect_circle(t_cylinder *cy, t_vec3 direction, t_vec3 v)
-{
-	float	c;
-	int		num_solutions;
-	float	solutions[2];
-
-	direction.z = 0;
-	v.z = 0;
-	c = dot(v, v) - (cy->radius * cy->radius);
-	num_solutions = solve_quadratic(dot(direction, direction),
-			2 * dot(direction, v), c, solutions);
-	if (num_solutions == 0)
-		return (INFINITY);
-	if (num_solutions == 1)
-		return (solutions[0]);
-	if (solutions[0] > 0 && solutions[1] > 0)
-		return (fmin(solutions[0], solutions[1]));
-	return (fmax(solutions[0], solutions[1]));
-}
-
-float	intersect_cylinder_side(t_cylinder *cy, t_vec3 origin, t_vec3 direction)
-{
-	float	t;
-	t_vec3	v;
-	t_vec3	inters;
-
-	direction = v_to_frame(direction, cy->fr);
-	v = to_frame(origin, cy->fr);
-	t = intersect_circle(cy, direction, v);
-	if (t == INFINITY || t < 0)
-		return (INFINITY);
-	inters = ray_at(t, direction, v);
-	if (inters.z > cy->height || inters.z < 0)
-		return (INFINITY);
-	return (t);
-}
-
-float	intersect_cylinder_base(t_cylinder *cy, t_vec3 origin, t_vec3 direction)
-{
-	float	f;
-	float	res;
-	t_plane	pl;
-
-	res = INFINITY;
-	pl.normal = norm(sub(cy->b, cy->a), 1.0);
-	pl.offset = dot(pl.normal, cy->a);
-	f = intersect_plane(&pl, origin, direction);
-	if (f > 0 && vec_length(sub(ray_at(f, direction, origin), cy->a))
-		< cy->radius)
-		res = f;
-	pl.offset = dot(pl.normal, cy->b);
-	f = intersect_plane(&pl, origin, direction);
-	if (f > 0 && vec_length(sub(ray_at(f, direction, origin), cy->b))
-		< cy->radius)
-		res = fminf(res, f);
-	return (res);
-}
-
-float	intersect_cylinder(t_cylinder *cy, t_vec3 origin, t_vec3 direction)
-{
-	float	f;
-
-	f = intersect_cylinder_side(cy, origin, direction);
-	f = fminf(f, intersect_cylinder_base(cy, origin, direction));
-	return (f);
-}
-
-t_vec3	cylinder_normal(t_cylinder *cy, t_vec3 point)
-{
-	point = to_frame(point, cy->fr);
-	if (point.z < 1e-5)
-		return (neg(cy->fr.z));
-	if (point.z > cy->height - 1e-5)
-		return (cy->fr.z);
-	point.z = 0;
-	return (norm(v_to_world(point, cy->fr), 1.0));
 }
