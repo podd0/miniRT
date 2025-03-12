@@ -6,7 +6,7 @@
 /*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 12:51:31 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/12 13:57:43 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,8 +258,17 @@ t_vec3		plane_normal(t_plane *pl, t_vec3 point);
 float		intersect_cylinder(t_cylinder *cy, t_vec3 origin, t_vec3 direction);
 t_vec3		cylinder_normal(t_cylinder *cy, t_vec3 point);
 t_vec3		norm_color(t_vec3 color);
-float	intersect_circle(t_cylinder *cy, t_vec3 direction, t_vec3 v);
-int	solve_quadratic(float a, float b, float c, float sol[2]);
+float		intersect_circle(t_cylinder *cy, t_vec3 direction, t_vec3 v);
+int			solve_quadratic(float a, float b, float c, float sol[2]);
+
+/*
+** Controller & Utils
+*/
+// static void	process_light_mode(int key, t_ctx *ctx);
+// void		clear_selection(t_ctx *ctx);
+// static void	process_window_resize(int key, t_ctx *ctx);
+// static void	process_movement_keys(int key, t_ctx *ctx);
+// static int	process_basic_keys(int key, t_ctx *ctx);
 
 
 /*
