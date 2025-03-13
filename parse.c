@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:13:05 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 16:57:24 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 17:32:24 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ t_scene	*parse_init(t_scene *scene, int fd)
 		splitted = ft_split(trimmed, ' ');
 		if (parse_element(scene, splitted))
 		{
+			printf("%s\n", trimmed);
 			free_scene(scene);
 			ft_split_free(splitted);
 			free(trimmed);
