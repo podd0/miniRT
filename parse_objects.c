@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_objects.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 11:31:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 11:39:45 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 16:50:48 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,10 +122,14 @@ int	parse_element(t_scene *scene, char **args)
 		if (ft_strncmp("A", args[0], 2) == 0)
 		{
 			scene->ambient_color = parse_ambient(args, &fail);
+			scene->flags |= AMBIENT_PARSED;
 			return (fail);
 		}
 		else if (ft_strncmp("C", args[0], 2) == 0)
+		{
+			scene->flags |= CAMERA_PARSED;
 			return (parse_camera(scene, args));
+		}
 		else if (ft_strncmp("L", args[0], 2) == 0)
 			return (parse_light(scene->lights, args));
 		else

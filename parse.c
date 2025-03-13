@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:13:05 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 11:35:22 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 16:57:24 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,11 @@ t_scene	*parse(char *filename)
 	set_methods(scene->methods);
 	scene = parse_init(scene, fd);
 	close(fd);
+	if (scene->flags != 3)
+	{
+		ft_putstr_fd("Missing camera or ambient light\n", 2);
+		free_scene(scene);
+		return (NULL);
+	}
 	return (scene);
 }

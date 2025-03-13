@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 16:05:19 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 17:11:16 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ typedef struct s_cylinder
 # define SPHERE 0
 # define PLANE 1
 # define CYLINDER 2
+# define AMBIENT_PARSED 1
+# define CAMERA_PARSED 2
 
 typedef struct s_methods
 {
@@ -158,6 +160,7 @@ typedef struct s_scene
 	t_vshape	*objects;
 	t_vector	*lights;
 	t_methods	methods[4];
+	int			flags;
 }	t_scene;
 
 typedef struct s_control
