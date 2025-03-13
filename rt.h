@@ -6,7 +6,7 @@
 /*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 19:00:43 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 19:42:30 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,11 +232,12 @@ t_vec3		ray_at(float t, t_vec3 direction, t_vec3 origin);
 /*
 ** Parsing and scene management
 */
+int			count_char(char *s, char c);
 t_scene		*parse(char *filename);
 void		free_scene(t_scene *scene);
 t_ctx		init(char *filename);
 t_vec3		parse_vec(char *s, int *fail);
-t_vec3		parse_ambient(char **args, int *fail);
+t_vec3		parse_ambient(char **args, int *fail, t_scene *scene);
 int			parse_element(t_scene *scene, char **args);
 int			parse_light(t_vector *lights, char **args);
 int			parse_camera(t_scene *scene, char **args);

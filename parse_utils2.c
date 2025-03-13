@@ -3,21 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 11:29:16 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 11:34:12 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 19:42:07 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
 
-t_vec3	parse_ambient(char **args, int *fail)
+t_vec3	parse_ambient(char **args, int *fail, t_scene *scene)
 {
 	float	f;
 	t_vec3	res;
 
-	if (arg_len(args) != 3)
+	if (arg_len(args) != 3 || scene->flags & AMBIENT_PARSED)
 	{
 		*fail = 1;
 		return ((t_vec3){0, 0, 0});
@@ -61,7 +61,7 @@ int	parse_camera(t_scene *scene, char **args)
 	int	fail;
 
 	fail = 0;
-	if (arg_len(args) != 4)
+	if (arg_len(args) != 4 || scene->flags & CAMERA_PARSED)
 		return (1);
 	scene->camera.o = parse_vec(args[1], &fail);
 	scene->camera.z = norm(parse_vec(args[2], &fail), 1);
@@ -85,4 +85,18 @@ int	parse_light(t_vector *lights, char **args)
 			light->color);
 	vec_push_back(lights, light);
 	return (fail);
+}
+
+int	count_char(char *s, char c)
+{
+	int	n;
+
+	n = 0;
+	while (*s)
+	{
+		if (*s == c)
+			n++;
+		s++;
+	}
+	return (n);
 }

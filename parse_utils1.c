@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 11:28:12 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 11:34:03 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 19:41:51 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,7 +100,7 @@ t_vec3	parse_vec(char *s, int *fail)
 		return ((t_vec3){0, 0, 0});
 	}
 	splitted = ft_split(s, ',');
-	*fail = *fail || arg_len(splitted) != 3;
+	*fail = *fail || arg_len(splitted) != 3 || count_char(s, ',') != 2;
 	if (*fail)
 	{
 		ft_split_free(splitted);

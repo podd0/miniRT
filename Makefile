@@ -10,7 +10,7 @@ MLX = minilibx-linux/libmlx.a
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -gdwarf-2 -I./libft -I. -I./minilibx-linux -Werror  -O3 -flto 
+CFLAGS = -Wall -Wextra -gdwarf-2 -I./libft -I. -I./minilibx-linux -Werror -O3 -flto 
 
 all: $(NAME)
 

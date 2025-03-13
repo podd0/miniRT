@@ -6,7 +6,7 @@
 /*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:13:05 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 18:44:21 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 19:19:36 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,7 @@ t_scene	*parse(char *filename)
 	set_methods(scene->methods);
 	scene = parse_init(scene, fd);
 	close(fd);
-	if (scene->flags != 3)
+	if (scene && scene->flags != 3)
 	{
 		ft_putstr_fd("Missing camera or ambient light\n", 2);
 		free_scene(scene);
