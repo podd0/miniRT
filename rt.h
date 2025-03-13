@@ -6,7 +6,7 @@
 /*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 17:11:16 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 17:40:59 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@
 # define N_BOUNCES 2
 
 # define MOVE_SPEED 0.3
-# define EPS 5e-5
+# define EPS 1e-4
 
 # define ACES_A 2.51f
 # define ACES_B 0.03f

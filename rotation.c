@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rotation.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/09 19:33:03 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 11:53:57 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 17:58:33 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,12 @@ void	rotate_sphere(t_sphere *sp, t_frame rot)
 
 void	rotate_camera(t_frame *cam, t_frame rot)
 {
-	cam->x = v_to_world(cam->x, rot);
-	cam->y = v_to_world(cam->y, rot);
-	cam->z = v_to_world(cam->z, rot);
+	t_frame	cam_copy;
+
+	cam_copy = *cam;
+	cam->x = v_to_world(rot.x, cam_copy);
+	cam->y = v_to_world(rot.y, cam_copy);
+	cam->z = v_to_world(rot.z, cam_copy);
 	cam->x = norm(cam->x, 1.0f);
 	cam->y = norm(cam->y, 1.0f);
 	cam->z = norm(cam->z, 1.0f);
