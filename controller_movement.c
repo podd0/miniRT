@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   controller_movement.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/12 13:13:52 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 14:11:08 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 11:15:30 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,16 @@
 void	apply_movement(t_ctx *ctx)
 {
 	t_vec3	movement;
+	t_light	*light;
 
-	movement = norm(v_to_frame(ctx->control.delta, ctx->scene->camera),
+	movement = norm(v_to_world(ctx->control.delta, ctx->scene->camera),
 			MOVE_SPEED);
-	if (ctx->selected)
+	if (ctx->control.selected_light != -1)
+	{
+		light = ctx->scene->lights->arr[ctx->control.selected_light];
+		light->pos = add(movement, light->pos);
+	}
+	else if (ctx->selected)
 		ctx->selected->methods->move(ctx->selected->obj, movement);
 	else
 		ctx->scene->camera.o = add(movement, ctx->scene->camera.o);
@@ -31,13 +37,31 @@ void	reset_show(t_ctx *ctx)
 	ft_bzero(ctx->img_vec, ctx->win_w * ctx->win_h * sizeof(t_vec3));
 }
 
-int	move(t_ctx *ctx)
+void	move(t_ctx *ctx)
 {
 	if (vec_length(ctx->control.delta) != 0)
+	{
 		apply_movement(ctx);
+		ctx->control.reset = 1;
+	}
+}
+
+void	rotate(t_ctx *ctx)
+{
+	t_frame	rot;
+	int		selected_light;
+
+	if (!ctx->control.rotating)
+		return ;
+	selected_light = ctx->control.selected_light;
+	rot = ctx->control.rotation;
+	if (ctx->selected)
+		ctx->selected->methods->rotate(ctx->selected->obj, rot);
+	else if (selected_light != -1)
+		rotate_light((t_light *)ctx->scene->lights->arr[selected_light], rot);
 	else
-		return (0);
-	return (1);
+		rotate_camera(&ctx->scene->camera, rot);
+	ctx->control.reset = 1;
 }
 
 void	preproc_ctrl(t_control *ctrl)
@@ -50,7 +74,9 @@ void	preproc_ctrl(t_control *ctrl)
 int	loop(t_ctx *ctx)
 {
 	preproc_ctrl(&ctx->control);
-	if (move(ctx) || ctx->control.reset)
+	move(ctx);
+	rotate(ctx);
+	if (ctx->control.reset)
 		reset_show(ctx);
 	update_show(ctx);
 	return (0);
@@ -82,6 +108,7 @@ int	handle_mouse(int k, int x, int y, t_ctx *ctx)
 	sh = intersect_scene(&p, direction, ctx->scene,
 			ctx->scene->camera.o);
 	clear_selection(ctx);
+	ctx->control.selected_light = -1;
 	if (sh)
 	{
 		ctx->selection_color = sh->color;
@@ -92,56 +119,21 @@ int	handle_mouse(int k, int x, int y, t_ctx *ctx)
 	return (0);
 }
 
-static void	light_translation(int key, t_light *light)
+static void	toggle_light(t_ctx *ctx)
 {
-	if (key == 'w')
-		translate_light(light, (t_vec3){0, 0, 0.3f});
-	else if (key == 's')
-		translate_light(light, (t_vec3){0, 0, -0.3f});
-	else if (key == 'a')
-		translate_light(light, (t_vec3){-0.3f, 0, 0});
-	else if (key == 'd')
-		translate_light(light, (t_vec3){0.3f, 0, 0});
-	else if (key == ' ')
-		translate_light(light, (t_vec3){0, 0.3f, 0});
-}
+	t_control	*ctrl;
 
-static void	light_rotation(int key, t_light *light)
-{
-	t_frame	rot;
-	float	angle;
-
-	angle = 5.0f;
-	if (key == 'i')
-		rot = rotx(angle);
-	else if (key == 'k')
-		rot = rotx(-angle);
-	else if (key == 'j')
-		rot = roty(angle);
-	else if (key == 'l')
-		rot = roty(-angle);
-	else if (key == 'u')
-		rot = rotz(angle);
-	else
-		rot = rotz(-angle);
-	rotate_light(light, rot);
-}
-
-static void	process_light_mode(int key, t_ctx *ctx)
-{
-	t_light	*light;
-
-	if (ctx->scene->lights->size > 0)
+	ctrl = &ctx->control;
+	ctrl->selected_light++;
+	if (ctrl->selected_light >= ctx->scene->lights->size)
 	{
-		light = ctx->scene->lights->arr[0];
-		if (key == 'w' || key == 's'
-			|| key == 'a' || key == 'd' || key == ' ')
-			light_translation(key, light);
-		else if (key == 'i' || key == 'k' || key == 'j'
-			|| key == 'l' || key == 'u' || key == 'o')
-			light_rotation(key, light);
+		ctrl->selected_light = -1;
+		printf("Light mode: no light selected\n");
 	}
-	reset_show(ctx);
+	else
+		printf("Light mode: selected light #%d\n", ctrl->selected_light);
+	ctrl->reset = 1;
+	clear_selection(ctx);
 }
 
 static void	process_window_resize(int key, t_ctx *ctx)
@@ -202,28 +194,29 @@ static void	process_object_height(int key, t_ctx *ctx)
 	}
 }
 
-static void	process_rotation(int key, t_ctx *ctx)
+static void	process_rotation_keys(int key, t_ctx *ctx)
 {
-	t_frame	rot;
-	float	angle;
+	t_frame		*rot;
+	float		angle;
 
+	if (key != 'i' && key != 'k' && key != 'j'
+		&& key != 'l' && key != 'u' && key != 'o')
+		return ;
+	ctx->control.rotating = 1;
 	angle = 5.0f;
+	rot = &ctx->control.rotation;
 	if (key == 'i')
-		rot = rotx(angle);
+		*rot = rotx(angle);
 	else if (key == 'k')
-		rot = rotx(-angle);
+		*rot = rotx(-angle);
 	else if (key == 'j')
-		rot = roty(angle);
+		*rot = roty(angle);
 	else if (key == 'l')
-		rot = roty(-angle);
+		*rot = roty(-angle);
 	else if (key == 'u')
-		rot = rotz(angle);
+		*rot = rotz(angle);
 	else
-		rot = rotz(-angle);
-	if (ctx->selected)
-		ctx->selected->methods->rotate(ctx->selected->obj, rot);
-	else
-		rotate_camera(&ctx->scene->camera, rot);
+		*rot = rotz(-angle);
 	reset_show(ctx);
 }
 
@@ -236,17 +229,7 @@ static int	process_exit_and_toggle(int key, t_ctx *ctx)
 	}
 	if (key == 'm')
 	{
-		ctx->control.light_mode = !ctx->control.light_mode;
-		if (ctx->control.light_mode)
-			printf("Light mode: ON\n");
-		else
-			printf("Light mode: OFF\n");
-		reset_show(ctx);
-		return (1);
-	}
-	if (ctx->control.light_mode)
-	{
-		process_light_mode(key, ctx);
+		toggle_light(ctx);
 		return (1);
 	}
 	return (0);
@@ -257,7 +240,7 @@ static void	process_clear_selection(int key, t_ctx *ctx)
 	if (key == 65293)
 	{
 		clear_selection(ctx);
-		ctx->control.active_light = -1;
+		ctx->control.selected_light = -1;
 	}
 }
 
@@ -303,9 +286,7 @@ static void	process_transform_keys(int key, t_ctx *ctx)
 		else if (key == 91 || key == 93)
 			process_object_height(key, ctx);
 	}
-	if (key == 'i' || key == 'k' || key == 'j'
-		|| key == 'l' || key == 'u' || key == 'o')
-		process_rotation(key, ctx);
+	process_rotation_keys(key, ctx);
 }
 
 int	handle_key_down(int key, t_ctx *ctx)
@@ -320,8 +301,6 @@ int	handle_key_down(int key, t_ctx *ctx)
 
 int	handle_key_up(int key, t_control *ctrl)
 {
-	if (ctrl->light_mode)
-		return (0);
 	printf("press key (%d)\n", key);
 	if (key == 65505 || key == 65506)
 		ctrl->shift = max(0, ctrl->shift - 1);
@@ -331,9 +310,12 @@ int	handle_key_up(int key, t_control *ctrl)
 		ctrl->delta.z -= -1;
 	else if (key == 'a')
 		ctrl->delta.x -= 1;
-	if (key == 'd')
+	else if (key == 'd')
 		ctrl->delta.x -= -1;
 	else if (key == ' ')
 		ctrl->space = 0;
+	else if (key == 'i' || key == 'k' || key == 'j'
+		|| key == 'l' || key == 'u' || key == 'o')
+		ctrl->rotating = 0;
 	return (0);
 }

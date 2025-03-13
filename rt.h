@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 13:57:43 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 11:16:01 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,9 +167,9 @@ typedef struct s_control
 	int		space;
 	int		reset;
 	t_vec3	delta;
-
-	int		light_mode;
-	int		active_light;
+	t_frame	rotation;
+	int		rotating;
+	int		selected_light;
 }	t_control;
 
 typedef struct s_ctx
@@ -240,9 +240,6 @@ int			parse_camera(t_scene *scene, char **args);
 int			arg_len(char **arr);
 float		parse_float(char *str, int *err);
 
-
-
-
 /*
 ** Drawing
 */
@@ -269,7 +266,6 @@ int			solve_quadratic(float a, float b, float c, float sol[2]);
 // static void	process_window_resize(int key, t_ctx *ctx);
 // static void	process_movement_keys(int key, t_ctx *ctx);
 // static int	process_basic_keys(int key, t_ctx *ctx);
-
 
 /*
 ** Ray tracing

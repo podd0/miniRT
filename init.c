@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 13:29:15 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 12:55:11 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 11:16:49 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ t_ctx	init(char *filename)
 	t_ctx	ctx;
 
 	ft_bzero(&ctx, sizeof(t_ctx));
+	ctx.control.selected_light = -1;
 	ctx.rounds = 0;
 	ctx.win_w = WIN_W;
 	ctx.win_h = WIN_H;
