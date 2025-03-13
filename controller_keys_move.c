@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   controller_keys_move.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 15:53:20 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 15:53:22 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 18:07:18 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ void	process_movement_keys(int key, t_ctx *ctx)
 
 int	handle_key_up(int key, t_control *ctrl)
 {
-	printf("press key (%d)\n", key);
 	if (key == 65505 || key == 65506)
 		ctrl->shift = max(0, ctrl->shift - 1);
 	if (key == 'w')
