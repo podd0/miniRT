@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 13:41:50 by amema             #+#    #+#             */
-/*   Updated: 2025/03/09 21:05:44 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 19:00:04 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "rt.h"
-#include <X11/Xutil.h>
 
 static int	setup_hooks(t_ctx *ctx)
 {
@@ -32,45 +31,34 @@ static void	cleanup(t_ctx *ctx)
 	free(ctx->img);
 	mlx_destroy_display(ctx->mlx);
 	free(ctx->mlx);
-	free(ctx);
+}
+
+void	check_valid_filename(char *filename)
+{
+	int	l;
+
+	l = ft_strlen(filename);
+	if (l < 3 || ft_strncmp(".rt", filename + l - 3, 3))
+	{
+		ft_putendl_fd("filename must end in '.rt'", 2);
+		exit(1);
+	}
+	return ;
 }
 
 int	main(int argc, char **argv)
 {
-	t_ctx	*ctx;
+	t_ctx	ctx;
 
 	if (argc != 2)
 	{
 		printf("Usage : %s SCENE\n", argv[0]);
 		return (0);
 	}
-	ctx = malloc(sizeof(t_ctx));
-	if (!ctx)
-	{
-		perror("malloc");
-		return (1);
-	}
-	*ctx = init(argv[1]);
-	setup_hooks(ctx);
-	mlx_loop(ctx->mlx);
-	cleanup(ctx);
+	check_valid_filename(argv[1]);
+	ctx = init(argv[1]);
+	setup_hooks(&ctx);
+	mlx_loop(ctx.mlx);
+	cleanup(&ctx);
 	return (0);
-}
-
-void	pvec(t_vec3 v)
-{
-	printf("(%f, %f, %f)", v.x, v.y, v.z);
-}
-
-void	pframe(t_frame f)
-{
-	printf("{");
-	pvec(f.x);
-	printf(",\n");
-	pvec(f.y);
-	printf(",\n");
-	pvec(f.z);
-	printf(",\n");
-	pvec(f.o);
-	printf("}\n");
 }

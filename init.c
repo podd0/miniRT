@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 13:29:15 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 16:55:18 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 18:42:25 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,21 @@ t_ctx	init(char *filename)
 	ctx.rounds = 0;
 	ctx.win_w = WIN_W;
 	ctx.win_h = WIN_H;
-	ctx.img_vec = ft_calloc(ctx.win_w * ctx.win_h, sizeof(t_vec3));
 	ctx.scene = parse(filename);
 	ctx.mlx = mlx_init();
 	ctx.mlx_win = mlx_new_window(ctx.mlx, ctx.win_w, ctx.win_h, "miniRT");
 	ctx.img = init_image(ctx.mlx, ctx.win_w, ctx.win_h);
 	if (!ctx.scene || !ctx.mlx || !ctx.mlx_win)
 	{
+		free(ctx.scene);
+		mlx_destroy_image(ctx.mlx, ctx.img->img);
+		mlx_destroy_window(ctx.mlx, ctx.mlx_win);
+		mlx_destroy_display(ctx.mlx);
+		free(ctx.img);
+		free(ctx.mlx);
 		ft_putstr_fd("Error\n", 2);
 		exit(1);
 	}
+	ctx.img_vec = ft_calloc(ctx.win_w * ctx.win_h, sizeof(t_vec3));
 	return (ctx);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:13:05 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 17:32:24 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 18:44:21 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ t_scene	*parse(char *filename)
 		perror("open");
 		return (NULL);
 	}
-	scene = malloc(sizeof(t_scene));
+	scene = calloc(sizeof(t_scene), 1);
 	set_methods(scene->methods);
 	scene = parse_init(scene, fd);
 	close(fd);

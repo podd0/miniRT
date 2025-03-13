@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   trace.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 15:23:36 by amema             #+#    #+#             */
-/*   Updated: 2025/03/12 11:26:51 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 19:02:26 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <rt.h>
-#include <stdio.h>
 
 int	is_shadow(t_vec3 o, t_vec3 d, t_scene *scene, float len)
 {

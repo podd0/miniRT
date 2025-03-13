@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 17:40:59 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 19:00:43 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 # include <fcntl.h>
 # include <unistd.h>
 
-# define WIN_W 1800
-# define WIN_H 600
+# define WIN_W 800
+# define WIN_H 800
 # define N_BOUNCES 2
 
 # define MOVE_SPEED 0.3
@@ -285,7 +285,6 @@ int			is_shadow(t_vec3 o, t_vec3 d, t_scene *scene, float len);
 t_vec3		shade_path(t_vec3 direction, t_vec3 o, t_scene *scene, int depth);
 t_vec3		shade_ray(t_vec3 direction, t_vec3 o, t_scene *scene);
 void		update_show(t_ctx *ctx);
-void		pvec(t_vec3 v);
 t_vec3		cvec(float f);
 t_vec3		clamp(t_vec3 v);
 

@@ -3,16 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   rot.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:32:31 by amema             #+#    #+#             */
-/*   Updated: 2025/02/25 14:32:32 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 19:02:00 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <rt.h>
-#include <libft.h>
-#include <math.h>
 
 float	deg_to_rad(float degrees)
 {
