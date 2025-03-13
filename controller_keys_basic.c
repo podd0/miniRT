@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   controller_keys_basic.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
+/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 15:54:26 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 16:27:38 by amema            ###   ########.fr       */
+/*   Updated: 2025/03/13 18:10:22 by apuddu           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,6 @@ int	handle_key_down(int key, t_ctx *ctx)
 {
 	if (process_basic_keys(key, ctx))
 		return (0);
-	printf("press key (%d)\n", key);
 	process_movement_keys(key, ctx);
 	process_transform_keys(key, ctx);
 	return (0);
