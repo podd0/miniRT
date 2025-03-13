@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   rt.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: apuddu <apuddu@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: amema <amema@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:35:28 by amema             #+#    #+#             */
-/*   Updated: 2025/03/13 11:16:01 by apuddu           ###   ########.fr       */
+/*   Updated: 2025/03/13 16:05:19 by amema            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -261,8 +261,12 @@ int			solve_quadratic(float a, float b, float c, float sol[2]);
 /*
 ** Controller & Utils
 */
+void		clear_selection(t_ctx *ctx);
+void		preproc_ctrl(t_control *ctrl);
+void		move(t_ctx *ctx);
+void		rotate(t_ctx *ctx);
+
 // static void	process_light_mode(int key, t_ctx *ctx);
-// void		clear_selection(t_ctx *ctx);
 // static void	process_window_resize(int key, t_ctx *ctx);
 // static void	process_movement_keys(int key, t_ctx *ctx);
 // static int	process_basic_keys(int key, t_ctx *ctx);
